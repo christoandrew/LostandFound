@@ -19,6 +19,9 @@ body {
 html {
 
 }
+#img-preview img{
+    margin-bottom: 15px;
+}
 
 #header {
     height: 50px;
@@ -68,7 +71,10 @@ html {
     width: 100%;
 
 }
-
+.cat-item-inner{
+    align: center;
+}
+/*
 .cat-icon {
     width: auto;
     text-align: center;
@@ -83,6 +89,7 @@ a .cat-inner:hover{
     position: absolute;
     top: 45%;
     left: 30%;
+    z-index: 1;
 }
 
 .cat-inner:hover {
@@ -92,8 +99,9 @@ a .cat-inner:hover{
 .cat-icon {
 
     text-align: -moz-center;
+    z-index: 0;
 
-}
+}*/
 
 .circle-border {
     border: 1px solid black;

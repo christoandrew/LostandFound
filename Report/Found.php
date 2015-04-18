@@ -1,47 +1,92 @@
 <?php
-    include_once '../utils/db_connect.php';
+include_once '../utils/db_connect.php';
 
-    $db = Database::getInstance();
-    $mysqli = $db->getConnection();
+$db = Database::getInstance();
+$mysqli = $db->getConnection();
 
-    if(isset($_POST['report-found'])){
-        $brand;
-        $day = $_POST['day'];
-        $month = $_POST['month'];
-        $year = $_POST['year'];
-        $date_posted = $year.'-'.$month.'-'.$day;
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-        $type = "Found";
-        $photo = "Default.png";
-        $color = $_POST['color'];
-        $category = $_POST['category'];
-        $subcategory = $_POST['subcategory'];
-        if(isset($_POST['brand'])){
-            $brand = $_POST['brand'];
-        }else{
-            $brand = $_POST['specific-brand'];
+if (isset($_POST['report-found'])) {
+    $brand;
+    $day = $_POST['day'];
+    $month = $_POST['month'];
+    $year = $_POST['year'];
+    $date_posted = $year . '-' . $month . '-' . $day;
+    $name = $_POST['name'];
+    $description = $_POST['description'];
+    $type = "Found";
+    $photo = "Default.png";
+    $color = $_POST['color'];
+    $category = $_POST['category'];
+    $subcategory = $_POST['subcategory'];
+    if (isset($_POST['brand'])) {
+        $brand = $_POST['brand'];
+    } else {
+        $brand = $_POST['specific-brand'];
+    }
+    $model = $_POST['model'];
+    $serial = $_POST['serial'];
+    $address = $_POST['address'];
+    $specific_location = $_POST['specific-location'];
+    $district = $_POST['district'];
+    $town = $_POST['town'];
+    $venue = $_POST['venue'];
+    $userId = "admin";
+
+    $target_dir = "../uploads/found/";
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+// Check if image file is a actual image or fake image
+
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+    if ($check !== false) {
+        echo "File is an image - " . $check["mime"] . ".";
+        $uploadOk = 1;
+    } else {
+        echo "File is not an image.";
+        $uploadOk = 0;
+    }
+
+// Check if file already exists
+    if (file_exists($target_file)) {
+        echo "Sorry, file already exists.";
+        $uploadOk = 0;
+    }
+// Check file size
+    if ($_FILES["fileToUpload"]["size"] > 500000) {
+        echo "Sorry, your file is too large.";
+        $uploadOk = 0;
+    }
+// Allow certain file formats
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif"
+    ) {
+        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        $uploadOk = 0;
+    }
+// Check if $uploadOk is set to 0 by an error
+    if ($uploadOk == 0) {
+        echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+    } else {
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+            echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
+        } else {
+            echo "Sorry, there was an error uploading your file.";
         }
-        $model = $_POST['model'];
-        $serial = $_POST['serial'];
-        $address = $_POST['address'];
-        $specific_location = $_POST['specific-location'];
-        $district = $_POST['district'];
-        $town = $_POST['town'];
-        $venue = $_POST['venue'];
-        $userId = "admin";
+    }
 
-        $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId)
+
+    $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId)
                             VALUES ('$name','$description','$type','$category','$subcategory','$brand','$serial',
                             '$model','$photo','$color','$venue','$date_posted','$district','$town','$specific_location','$userId')";
 
-        if($mysqli->query($createFoundItem)){
-            echo "<script>alert('Item Created')</script>";
-        }else{
-            printf("Error occurred %s",$mysqli->error);
-        };
-
+    if ($mysqli->query($createFoundItem)) {
+        echo "<script>alert('Item Created')</script>";
+    } else {
+        printf("Error occurred %s", $mysqli->error);
     };
+
+};
 
 
 ?>
@@ -55,6 +100,20 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css">
     <script src="../js/functions.js"></script>
     <script src="../js/ajax.js"></script>
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img-preview').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+
+        }
+    </script>
 </head>
 <body onload="doAjax('../utils/get_categories.php', '', 'populateCategories', 'post', '1');">
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -88,7 +147,7 @@
                     <h3>Item Information</h3>
                 </div>
                 <div class="panel-body">
-                    <form method="post" action="Found.php">
+                    <form method="post" action="Found.php" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Date The Item Was Found</h5>
@@ -182,9 +241,11 @@
                                     <!--<option value="0">--Choose A Brand--</option>-->
                                 </select>
                                 <h5>If You Cant See Your Brand!</h5>
-                                <input type="text" id="specify-brand" name="specific-brand" placeholder="Specify Brand" class="form-control"/>
+                                <input type="text" id="specify-brand" name="specific-brand" placeholder="Specify Brand"
+                                       class="form-control"/>
                                 <h5>Model</h5>
-                                <input type="text" id="model" name="model" placeholder="Item Model" class="form-control"/>
+                                <input type="text" id="model" name="model" placeholder="Item Model"
+                                       class="form-control"/>
                                 <h5>Serial Number/ID/Baggage Claim</h5>
                                 <input type="text" id="serial" name="serial" class="form-control"/>
                                 <h5>Color</h5>
@@ -198,13 +259,16 @@
                                 <small>
                                     Short, generic description - example: "Large Black Lab" or "Smart Phone"
                                 </small>
-                                <textarea class="span12 form-control" name="name" rows="3" placeholder="What's up?" required></textarea>
+                                <textarea class="span12 form-control" name="name" rows="3" placeholder="What's up?"
+                                          required></textarea>
                                 <h5>Specific Description:</h5>
                                 <small>Detailed Description: Name, Size, Weight, Type, Contents</small>
-                                <textarea class="span12 form-control" name="description" rows="5" placeholder="What's up?" required></textarea>
-                                <br><br><br>
-                                <input type="submit" value="Upload Photo" id="upload-photo"
-                                       class="btn btn-success btn-block"/>
+                                <textarea class="span12 form-control" name="description" rows="5"
+                                          placeholder="What's up?" required></textarea>
+                                <br>
+                                <img src="#" id="img-preview" name="img-preview" alt="Item Image" width="100px" height="100px"/>
+                                <input type="file" value="Upload Photo" id="fileToUpload" name="fileToUpload"
+                                       class="btn btn-success btn-block" onchange="readURL(this)"/>
                             </div>
                         </div>
 
@@ -229,7 +293,8 @@
                                         the item was lost or found. For example: under seat 22,
                                         classroom, locker.
                                     </small>
-                                    <textarea class="span12 form-control" rows="2" placeholder="What's up?" name="specific-location"
+                                    <textarea class="span12 form-control" rows="2" placeholder="What's up?"
+                                              name="specific-location"
                                               required></textarea>
                                 </div>
                                 <div class="col-md-6">
@@ -267,7 +332,9 @@
                 </div>
             </div>
         </div>
-    </div><br><br>
+    </div>
+    <br><br>
+
     <div class="row">
         <div class="col-lg-12 footer">
             <div class="col-sm-6 col-md-3">

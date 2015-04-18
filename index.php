@@ -30,7 +30,7 @@ $mysqli = $db->getConnection();
     </div>-->
     <div class="row">
         <div class="col-md-12">
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-inverse">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -632,6 +632,7 @@ $mysqli = $db->getConnection();
 <script type="text/javascript" src="js/jquery-1.11.2.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/flickity.pkgd.min.js"></script>
+
 <script type="text/javascript">
     $('.main-gallery').flickity({
         // options
