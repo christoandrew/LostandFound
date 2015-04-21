@@ -5,6 +5,7 @@
     font-style: normal;
 }
 
+
 body {
     font-family: "RobotoCondensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
     padding-top: 60px;
@@ -16,6 +17,14 @@ body {
 
 }
 
+
+.item-home{
+    width: 100%;
+
+}
+.item-home img{
+    object-fit: contain;
+}
 html {
 
 }

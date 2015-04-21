@@ -1,3 +1,37 @@
+<?php
+include_once "utils/PasswordHash.php";
+include_once "utils/db_connect.php";
+$db = Database::getInstance();
+$mysqli = $db->getConnection();
+
+if (isset($_POST['username']) && isset($_POST['password'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $checkLogin = $mysqli->query("SELECT * FROM Users WHERE username='$username'");
+    $rows = mysqli_fetch_array($checkLogin, MYSQL_ASSOC);
+    if($checkLogin){
+        if (mysqli_num_rows($checkLogin) > 0 && validate_password($password,$rows['Password'])) {
+            if($rows['Activation'] == 0){
+                echo "Please Activate Your Email";
+            }
+            /*session_start();
+            $_SESSION["username"] = $username;
+            $_SESSION["password"] = $password;
+
+            header("Location:index.php");*/
+        } else{
+            echo "<script>alert('Invalid Login');</script>";
+        }
+    } else{
+        printf("Error occurred %s", $mysqli->error);
+    }
+
+
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,23 +40,8 @@
     </title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script type="text/javascript" src="js/functions.js"></script>
-    <style>
-        #loading{
-            background:url('img/loader64.gif') no-repeat;
-            height: 63px;
-        }
-    </style>
-    <script type="text/javascript" src="js/ajax.js"/>
-    <script  type="text/javascript" language="JavaScript">
-        function init() {
-            doAjax('test.php', '', 'populateCategories', 'post', '1');
-        }
-    </script>
-
-
 </head>
-<body onload="doAjax('utils/getcategories.php', '', 'populateCategories', 'post', '1');">
+<body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -47,48 +66,61 @@
 </nav>
 
 <div class="container">
-    <form class="form-horizontal">
-        <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-
-            <div class="col-sm-10">
-                <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+    <div id="login-overlay" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login to site.com</h4>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="well">
+                            <form id="loginForm" method="POST" action="login.php" novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="username" class="control-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" value=""
+                                           required="" title="Please enter you username"
+                                           placeholder="example@gmail.com">
+                                    <span class="help-block"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="control-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" value=""
+                                           required="" title="Please enter your password">
+                                    <span class="help-block"></span>
+                                </div>
+                                <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="remember" id="remember"> Remember login
+                                    </label>
 
-            <div class="col-sm-10">
-                <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"> Remember me
-                    </label>
+                                    <p class="help-block">(if this is a private computer)</p>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block">Login</button>
+                                <a href="/forgot/" class="btn btn-default btn-block">Help to login</a>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <p class="lead">Register now for <span class="text-success">FREE</span></p>
+                        <ul class="list-unstyled" style="line-height: 2">
+                            <li><span class="fa fa-check text-success"></span> See all your orders</li>
+                            <li><span class="fa fa-check text-success"></span> Fast re-order</li>
+                            <li><span class="fa fa-check text-success"></span> Save your favorites</li>
+                            <li><span class="fa fa-check text-success"></span> Fast checkout</li>
+                            <li><span class="fa fa-check text-success"></span> Get a gift
+                                <small>(only new customers)</small>
+                            </li>
+                            <li><a href="/read-more/"><u>Read more</u></a></li>
+                        </ul>
+                        <p><a href="/new-customer/" class="btn btn-info btn-block">Yes please, register now!</a></p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Sign in</button>
-            </div>
-        </div>
-    </form>
-    <div class="row">
-        <div class="col-md-12">
-            <select name="category" id="category" onchange="resetValues();doAjax('utils/getsubcategories.php', 'catId='+getValue('category'), 'populateSubcategories', 'post', '1')"">
-                <option value="">--Choose A Category--</option>
-            </select>
-            <div id="loading" style="display: none;" ></div>
-            <select name="subcategory" id="subcategory" disabled="disabled">
-                <option value="">--Choose A SubCategory--</option>
-            </select>
-
-        </div>
-        <div id="loading" style="display: none;" ></div>
     </div>
 </div>
 

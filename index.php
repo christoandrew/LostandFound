@@ -5,6 +5,7 @@ $db = Database::getInstance();
 $mysqli = $db->getConnection();
 
 
+
 ?>
 
 <!DOCTYPE html>
@@ -129,175 +130,36 @@ $mysqli = $db->getConnection();
                                 <div class="carousel-inner" role="listbox">
                                     <div class="item active">
                                         <div class="row">
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
+                                            <?php
+                                            $getLatest = $mysqli->query("SELECT * FROM items LIMIT 12");
+                                            if ($getLatest) {
+                                                if (mysqli_num_rows($getLatest) > 0) {
+                                                    while ($rows = mysqli_fetch_array($getLatest, MYSQL_ASSOC)) {
+                                                        echo '<div class="col-md-4 col-sm-6 col-xs-6">
 
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
+                                                                <div class="thumbnail item-home">
+                                                                    <img class="img" width="900" height="600" src="uploads/found/'.$rows["Photo"].'" alt="">
 
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
+                                                                    <div class="caption">
+                                                                        <h4 class="pull-right">'.$rows["Type"].'</h4>
+                                                                        <h4><a href="#">'.$rows["Name"].'</a>
+                                                                        </h4>
 
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
+                                                                        <p>'.$rows["Description"].'</p>
+                                                                    </div>
 
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                                                </div>
 
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
+                                                            </div>';
+                                                    }
+                                                }
 
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
-
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
-
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
-
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
-
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
-
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
-
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
-
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
-
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
-
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
-
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
-
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
-
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
-
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
-
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
-
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-xs-6">
-
-                                                <div class="thumbnail">
-                                                    <img src="http://placehold.it/320x150" alt="">
-
-                                                    <div class="caption">
-                                                        <h4 class="pull-right">$74.99</h4>
-                                                        <h4><a href="#">Third Product</a>
-                                                        </h4>
-
-                                                        <p>This is a short description. Lorem ipsum dolor sit amet,
-                                                            consectetur adipiscing
-                                                            elit.</p>
-                                                    </div>
-                                                    <div class="ratings">
-                                                        <p class="pull-right">31 reviews</p>
-
-                                                        <p>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star"></span>
-                                                            <span class="glyphicon glyphicon-star-empty"></span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
+                                            } else {
+                                                printf("Error occurred %s", $mysqli->error);
+                                            }
+                                            ?>
                                         </div>
+
                                     </div>
                                     <div class="item">
                                         <div class="row">
@@ -345,6 +207,7 @@ $mysqli = $db->getConnection();
                                                     <div class="ratings">
                                                         <p class="pull-right">31 revi
                                                             ews</p>
+
                                                         <p>
                                                             <span class="glyphicon glyphicon-star"></span>
                                                             <span class="glyphicon glyphicon-star"></span>

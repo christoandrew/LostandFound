@@ -13,7 +13,6 @@ if (isset($_POST['report-found'])) {
     $name = $_POST['name'];
     $description = $_POST['description'];
     $type = "Found";
-    $photo = "Default.png";
     $color = $_POST['color'];
     $category = $_POST['category'];
     $subcategory = $_POST['subcategory'];
@@ -33,6 +32,8 @@ if (isset($_POST['report-found'])) {
 
     $target_dir = "../uploads/found/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $temp = explode(".",basename($_FILES["fileToUpload"]["name"]));
+    $photo = rand(1,99999) . '.' .end($temp);
     $uploadOk = 1;
     $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 // Check if image file is a actual image or fake image
@@ -57,8 +58,9 @@ if (isset($_POST['report-found'])) {
         $uploadOk = 0;
     }
 // Allow certain file formats
-    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-        && $imageFileType != "gif"
+    if ($imageFileType != "jpg" && $imageFileType != "JPG"  && $imageFileType != "png" && $imageFileType != "PNG"
+    && $imageFileType != "jpeg" && $imageFileType != "JPEG" && $imageFileType != "gif" && $imageFileType != "GIF"
+
     ) {
         echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
         $uploadOk = 0;
@@ -68,7 +70,7 @@ if (isset($_POST['report-found'])) {
         echo "Sorry, your file was not uploaded.";
 // if everything is ok, try to upload file
     } else {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir."".$photo)) {
             echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
         } else {
             echo "Sorry, there was an error uploading your file.";
