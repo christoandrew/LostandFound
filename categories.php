@@ -38,7 +38,7 @@ $mysqli = $db->getConnection();
     </div>-->
     <div class="row">
         <div class="col-md-12">
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -71,6 +71,11 @@ $mysqli = $db->getConnection();
             </nav>
         </div>
     </div>
+    <ol class="breadcrumb">
+        <li><a href="index.php">Home</a></li>
+        <li class="active">Categories</li>
+
+    </ol>
     <div class="row">
         <div class="isotope">
             <div class="col-md-9">

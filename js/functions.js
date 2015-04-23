@@ -1,6 +1,45 @@
 /**
  * Created by abel on 4/10/2015.
  */
+function checkForm() {
+    firstname = document.getElementById("firstname").value;
+    lastname = document.getElementById("lastname").value;
+    username = document.getElementById("username").value;
+    email = document.getElementById("email").value;
+    password = document.getElementById("password").value;
+    conf_password = document.getElementById("conf-password").value;
+    phone = document.getElementById("phone").value;
+
+    if(firstname == ''){
+        document.getElementById("error-firstname").innerHTML = "<p class='alert-danger'>Firstname is required</p>";
+        return;
+    }
+
+}
+// AJAX code to check input field values when onblur event triggerd.
+function validate(field, query,formField) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) { // for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else { // for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState != 4 && xmlhttp.status == 200) {
+            document.getElementById(field).innerHTML = "Validating..";
+
+        } else if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            document.getElementById(field).innerHTML = xmlhttp.responseText;
+            //alert(xmlhttp.readyState+""+xmlhttp.status);
+            // document.getElementById(field).innerHTML = '<p>ReadState = '+xmlhttp.readyState+' Status = '+xmlhttp.status+'</p>';
+        } else {
+            document.getElementById(field).innerHTML = "Error Occurred. <a href='index.php'>Reload Or Try Again</a> the page.";
+        }
+    }
+    xmlhttp.open("GET", "utils/validate.php?field=" + formField + "&query=" + query, false);
+    xmlhttp.send();
+}
 function populateCategories(xmlDataIn) {
     var xmldata = xmlDataIn.getElementsByTagName('Category');
     if(xmldata.length <= 0) { // check for data

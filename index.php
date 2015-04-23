@@ -31,7 +31,7 @@ $mysqli = $db->getConnection();
     </div>-->
     <div class="row">
         <div class="col-md-12">
-            <nav class="navbar navbar-inverse">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -67,19 +67,19 @@ $mysqli = $db->getConnection();
     <div class="row">
         <div class="col-md-3 hidden-sm hidden-xs">
             <h3 class="side-heading">Categories</h3>
-            <ul class="list-group">
-                <li class="list-group-item"><i class="fa fa-laptop fa-2x fa-fw"></i>Electronics<span
-                        class="badge pull-right">32</span></li>
-                <li class="list-group-item"><i class="fa fa-money fa-2x fa-fw"></i> Money</li>
-                <li class="list-group-item"><i class="fa fa-diamond fa-2x fa-fw"></i>Jewellery</li>
-                <li class="list-group-item"><i class="fa fa-paw fa-2x fa-fw"></i>Animals</li>
-                <li class="list-group-item"><i class="fa fa-briefcase fa-2x fa-fw"></i> Luggage</li>
-                <li class="list-group-item"><i class="fa fa-envelope fa-2x fa-fw"></i> Mail</li>
-                <li class="list-group-item"><i class="fa fa-trophy fa-2x fa-fw"></i>Collectables</li>
-                <li class="list-group-item"><i class="fa fa-book fa-2x fa-fw"></i>Literature</li>
-                <li class="list-group-item"><i class="fa fa-car fa-2x fa-fw"></i>Transportation</li>
-            </ul>
-            <a href="all-categories" class="btn btn-default btn-block">All Categories<i
+            <div class="list-group">
+                <a href="Category/electronics.php" class="list-group-item"><i class="fa fa-laptop fa-2x fa-fw"></i>Electronics<span
+                        class="badge pull-right">32</span></a>
+                <a href="Category/money.php" class="list-group-item"><i class="fa fa-money fa-2x"></i> Money</a>
+                <a href="Category/jewellery.php" class="list-group-item"><i class="fa fa-diamond fa-2x"></i>Jewellery</a>
+                <a href="Category/animals.php" class="list-group-item"><i class="fa fa-paw fa-2x fa-fw"></i>Animals</a>
+                <a href="Category/baggage.php" class="list-group-item"><i class="fa fa-briefcase fa-2x fa-fw"></i> Luggage</a>
+                <a href="Category/mail.php" class="list-group-item"><i class="fa fa-envelope fa-2x fa-fw"></i> Mail</a>
+                <a href="Category/collectables.php" class="list-group-item"><i class="fa fa-trophy fa-2x fa-fw"></i>Collectables</a>
+                <a href="Category/literature.php" class="list-group-item"><i class="fa fa-book fa-2x fa-fw"></i>Literature</a>
+                <a href="Category/transportation.php" class="list-group-item"><i class="fa fa-car fa-2x fa-fw"></i>Transportation</a>
+            </div>
+            <a href="categories.php" class="btn btn-default btn-block">All Categories<i
                     class="fa fa-angle-double-right" style="margin-left: 10px;"></i> </a>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">

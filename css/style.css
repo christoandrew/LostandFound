@@ -16,7 +16,104 @@ body {
 .select-date{
 
 }
+ul#list-select li{
+    display: inline-block;
+    list-style-type: none;
+}
+.list{
+    background:  #eeefff;
+}
 
+input, textarea, keygen, select, button {
+    margin: 0em;
+    font: normal normal normal 13.3333330154419px/normal Arial;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+}
+.img-view{
+    margin: 20px;
+}
+.reg-block {
+    width: 380px;
+    padding: 20px;
+    margin: 60px auto;
+    background: #fff;
+    border-top: solid 2px #72c02c;
+}
+.reg-block-header {
+    padding-bottom: 5px;
+    margin-bottom: 30px;
+    border-bottom: solid 1px #eee;
+}
+button {
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    padding: 2px 6px 3px;
+    border: 2px outset buttonface;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background-color: buttonface;
+    box-sizing: border-box;
+}
+form {
+    display: block;
+    margin-top: 0em;
+}
+.message{
+    font-size: small;
+    margin: 10px;
+}
+.reg-page {
+    font-family: Helvetica Neue, Helvetica, Arial, "sans-serif";
+    color: #555;
+    padding: 30px;
+    background: #fefefe;
+    border: solid 1px #eee;
+    -webkit-box-shadow: 0px 0px 6px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow:    0px 0px 6px #ccc;  /* Firefox 3.5 - 3.6 */
+    box-shadow:         0px 0px 6px #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+.reg-header {
+    color: #555;
+    text-align: center;
+    margin-bottom: 35px;
+    border-bottom: solid 1px #eee;
+}
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+.input-group-addon {
+    color: #b3b3b3;
+    font-size: 14px;
+    background: #fff;
+}
+table {
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 2px;
+    border-color: gray;
+}
+
+.pro-tip{
+    font-size: 14px;
+}
+.table-striped td{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+}
 
 .item-home{
     width: 100%;
@@ -148,11 +245,7 @@ a .cat-inner:hover{
 }
 
 hr {
-    border: 1px double #adadad;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    height: 1px;
-    line-height: 1px;
+    border: 1px solid #adadad;
 }
 
 .footer2 {

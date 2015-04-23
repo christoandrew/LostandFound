@@ -1,12 +1,21 @@
 <?php
+include_once "db_connect.php";
+
+$db = Database::getInstance();
+$mysqli = $db->getConnection();
 $value = $_GET['query'];
 $formfield = $_GET['field'];
+
 // Check Valid or Invalid user name when user enters user name in username input field.
 if ($formfield == "username") {
-    if (strlen($value) < 4) {
-        echo "Must be 3+ letters";
-    } else {
-        echo "<span>Valid</span>";
+    $checkUsername = $mysqli->query("SELECT * FROM users WHERE username='$value'");
+    if (strlen($value) < 6) {
+        echo "Password too short";
+    }
+    else if (mysqli_num_rows($checkUsername) > 0){
+        echo "<p class='message alert-danger'>Username is Taken</p>";
+    }else{
+        echo "Username cannot be blank";
     }
 }
 // Check Valid or Invalid password when user enters password in password input field.
@@ -22,7 +31,10 @@ if ($formfield == "email") {
     if (!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $value)) {
         echo "Invalid email";
     } else {
-        echo "<span>Valid</span>";
+        $checkEmail = $mysqli->query("SELECT * FROM users WHERE email='$value'");
+        if(mysqli_num_rows($checkEmail) > 0){
+            echo "Email Already In Use";
+        }
     }
 }
 // Check Valid or Invalid website address when user enters website address in website input field.
