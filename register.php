@@ -1,46 +1,11 @@
 <?php
 include_once "utils/db_connect.php";
 include_once "utils/PasswordHash.php";
-include_once "utils/functions.php";
+include_once "utils/mail_functions.php";
 
 
 $db = Database::getInstance();
 $mysqli = $db->getConnection();
-
-if (isset($_POST['register'])) {
-    $firstname = $_POST['firstname'];
-    $lastname = $_POST['lastname'];
-    $email = $_POST['email'];
-    $password = create_hash($_POST['password']);
-    $phone = $_POST['phone'];
-    $username = $_POST['username'];
-    $activation_token = getToken();
-
-    $info = array(
-        'username' => $username,
-        'email' => $email,
-        'key' => $activation_token
-    );
-
-    //send the email
-    if (send_email($info)) {
-
-        echo "Thanks for signing up. Please check your email for confirmation!\n";
-        echo json_encode($info);
-
-    } else {
-        echo "Error";
-    }
-
-    $createUser = "INSERT INTO Users SET firstname='$firstname', lastname='$lastname',email='$email',password='$password',ActivationToken='$activation_token', phone='$phone',ProfilePhoto='guest.png', username='$username'";
-
-    if ($mysqli->query($createUser)) {
-        echo "User Successfully Registered";
-    } else {
-        printf("Errormessage: %s\n", $mysqli->error);
-    }
-
-}
 
 
 ?>
@@ -83,6 +48,89 @@ if (isset($_POST['register'])) {
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <?php
+            if (isset($_POST['register'])) {
+                echo "time to post";
+                $firstname = $_POST['firstname'];
+                $lastname = $_POST['lastname'];
+                $email = $_POST['email'];
+                $conf_pass = $_POST['conf-password'];
+                $password = $_POST['password'];
+                $phone = $_POST['phone'];
+                $username = $_POST['username'];
+                $activation_token = getToken();
+
+                $info = array(
+                    'username' => $username,
+                    'email' => $email,
+                    'key' => $activation_token
+                );
+
+                if ($conf_pass == $password) {
+                    $checkName = $mysqli->query("SELECT* FROM User WHERE firstname='$firstname' AND lastname='$lastname'");
+                    $checkUsername = $mysqli->query("SELECT * FROM Users WHERE username='$username'");
+                    $checkEmail = $mysqli->query("SELECT * FROM Users WHERE email='$email'");
+
+                    if (mysqli_num_rows($checkName) > 0) {
+                        echo '<div class="container">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                              <strong>' . $firstname . '' . $lastname . ' is already registered</strong>
+                                            </div>
+
+                        </div>';
+                    } else if (mysqli_num_rows($checkUsername) > 0) {
+                        echo '<div class="container">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                              <strong>Username is Already in Use</strong>
+                                            </div>
+
+                        </div>';
+                    } else if (mysqli_num_rows($checkEmail) > 0) {
+                        echo '<div class="container">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                              <strong>Email is Associated with another account</strong>
+                                            </div>
+
+                        </div>';
+                    } else {
+                        $hash = create_hash($_POST['password']);
+
+                        $createUser = "INSERT INTO Users SET firstname='$firstname', lastname='$lastname',email='$email',password='$hash',ActivationToken='$activation_token', phone='$phone',ProfilePhoto='guest.png', username='$username'";
+
+                        if ($mysqli->query($createUser)) {
+                            //send the email
+                            if (send_email($info)) {
+                                echo '<div class="container">
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                              <strong>Successfully Registered Please Visit Your Email<</strong>
+                                            </div>
+
+                        </div>';
+                            } else {
+                                echo "Error";
+                            }
+
+                            header("Location:login.php");
+                        } else {
+                            printf("Error message: %s\n", $mysqli->error);
+                        }
+                    }
+                } else {
+                    echo '<div class="container">
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                              <strong>Server Error Try Again Later</strong>
+                                            </div>
+
+                        </div>';
+
+                }
+            }
+            ?>
             <form class="reg-page" method="post" action="register.php">
                 <div class="reg-header">
                     <div class="media">
@@ -107,7 +155,7 @@ if (isset($_POST['register'])) {
                                    onkeydown="validate('error-firstname', this.value, 'firstname')"
                                    placeholder="Firstname"/>
 
-                            <div id="error-firstname"></div>
+                            <div class="message" id="error-firstname"></div>
                         </div>
 
                     </div>
@@ -119,7 +167,7 @@ if (isset($_POST['register'])) {
                                    onkeydown="validate('error-lastname', this.value, 'lastname')"
                                    placeholder="Lastname">
                         </div>
-                        <div id="error-lastname"></div>
+                        <div class="message" id="error-lastname"></div>
                     </div>
                 </div>
                 <br>
@@ -132,7 +180,7 @@ if (isset($_POST['register'])) {
                                    onblur="validate('error-username', this.value, 'username')"
                                    class="form-control margin-bottom-20">
                         </div>
-                        <div id="error-username"></div>
+                        <div class="message" id="error-username"></div>
                     </div>
                 </div>
                 <br>
@@ -158,7 +206,7 @@ if (isset($_POST['register'])) {
                                    onkeydown="validate('error-phone', this.value, 'phone')"
                                    class="form-control margin-bottom-20">
                         </div>
-                        <div id="error-phone"></div>
+                        <div class="message" id="error-phone"></div>
                     </div>
                 </div>
                 <br>
@@ -167,21 +215,21 @@ if (isset($_POST['register'])) {
                     <div class="col-sm-6">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
-                            <input type="text" name="password" id="password" placeholder="Password"
+                            <input type="password" name="password" id="password" placeholder="Password"
                                    onkeydown="validate('error-password', this.value, 'password')"
                                    class="form-control margin-bottom-20">
-
-                            <div id="error-password"></div>
                         </div>
+                        <div class="message" id="error-password"></div>
                     </div>
                     <div class="col-sm-6">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
-                            <input type="text" name="conf-password" id="conf-password" placeholder="Confirm Password"
+                            <input type="password" name="conf-password" id="conf-password"
+                                   placeholder="Confirm Password"
                                    onkeydown="validate('error-confirm', this.value, 'conf-password')"
                                    class="form-control margin-bottom-20">
                         </div>
-                        <div id="error-confirm"></div>
+                        <div class="message" id="error-confirm"></div>
                     </div>
                 </div>
                 <br>
@@ -194,7 +242,8 @@ if (isset($_POST['register'])) {
                         </label>
                     </div>
                     <div class="col-lg-6 text-right">
-                        <input class="btn btn-success" type="submit" value="Register"/>
+                        <input class="btn btn-success" type="submit" name="register" value="Register"/>
+                    </div>
                 </div>
             </form>
         </div>

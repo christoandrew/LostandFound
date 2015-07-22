@@ -1,22 +1,46 @@
 <?php
+session_start();
+if ($_SESSION['username'] == '' || $_SESSION['username'] == null) header("Location:../login.php");
+?>
+<?php
 include_once '../utils/db_connect.php';
-require_once '../utils/crop.php';
+include_once "../utils/mail_functions.php";
 
 $db = Database::getInstance();
 $mysqli = $db->getConnection();
 
+$getLostItems = $mysqli->query("SELECT * FROM items WHERE Subcategory = '3' AND Type='LOST'");
 
-if (isset($_POST['report-found'])) {
+if ($getLostItems) {
+    if (mysqli_num_rows($getLostItems) > 0) {
+        while ($rows = mysqli_fetch_array($getLostItems, MYSQL_ASSOC)) {
+            $ID = $rows['userId'];
+            $getEmail = $mysqli->query("SELECT email FROM users WHERE userId='$ID'");
 
-    $crop = new CropAvatar($_POST['avatar_src'], $_POST['avatar_data'], $_FILES['avatar_file']);
+            if ($getEmail) {
+                if (mysqli_num_rows($getEmail) > 0) {
+                    while ($eRow = mysqli_fetch_array($getEmail, MYSQL_ASSOC)) {
+                        /*$info = array(
+                            'username' => "Christo Andrew",
+                            'email' => $eRow['email'],
+                            'key' => $activation_token
+                        );
+                        send_email($info);*/
 
-    $response = array(
-        'state' => 200,
-        'message' => $crop->getMsg(),
-        'result' => $crop->getResult()
-    );
+                        //echo $eRow['email'];
+                    }
+                }
+            } else {
+                echo "Error occurred";
+            }
+        }
+    }
+} else {
+    echo "Error occurred";
+}
 
-    echo json_encode($response);
+
+if (isset($_POST['add-property'])) {
 
     $brand;
     $day = $_POST['day'];
@@ -25,7 +49,7 @@ if (isset($_POST['report-found'])) {
     $date_posted = $year . '-' . $month . '-' . $day;
     $name = $_POST['name'];
     $description = $_POST['description'];
-    $type = "Lost";
+    $type = "Found";
     $color = $_POST['color'];
     $category = $_POST['category'];
     $subcategory = $_POST['subcategory'];
@@ -43,7 +67,7 @@ if (isset($_POST['report-found'])) {
     $venue = $_POST['venue'];
     $userId = "admin";
 
-    /*$target_dir = "../uploads/lost/";
+    $target_dir = "../uploads/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $temp = explode(".", basename($_FILES["fileToUpload"]["name"]));
     $photo = rand(1, 99999) . '.' . end($temp);
@@ -53,7 +77,7 @@ if (isset($_POST['report-found'])) {
 
     $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
     if ($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
+        // echo "File is an image - " . $check["mime"] . ".";
         $uploadOk = 1;
     } else {
         echo "File is not an image.";
@@ -84,11 +108,11 @@ if (isset($_POST['report-found'])) {
 // if everything is ok, try to upload file
     } else {
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir . "" . $photo)) {
-            echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
+            // echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
-    }*/
+    }
 
 
     $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId)
@@ -119,18 +143,18 @@ if (isset($_POST['report-found'])) {
     <script src="../js/functions.js"></script>
     <script src="../js/ajax.js"></script>
     <script type="text/javascript">
-        /*function readURL(input) {
-         if (input.files && input.files[0]) {
-         var reader = new FileReader();
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
 
-         reader.onload = function (e) {
-         $('#img-preview').attr('src', e.target.result);
-         }
+                reader.onload = function (e) {
+                    $('#img-preview').attr('src', e.target.result);
+                }
 
-         reader.readAsDataURL(input.files[0]);
-         }
+                reader.readAsDataURL(input.files[0]);
+            }
 
-         }*/
+        }
     </script>
 </head>
 <body onload="doAjax('../utils/get_categories.php', '', 'populateCategories', 'post', '1');">
@@ -148,120 +172,51 @@ if (isset($_POST['report-found'])) {
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="../index.php">Home</a></li>
+                <li><a href="../categories.php">Categories</a></li>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Report</a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="../Report/Lost.php">Lost Item</a></li>
+                        <li><a href="Found.php">Found Item</a></li>
+                    </ul>
+                </li>
+                <li><a href="../about.php">About</a></li>
+                <li><a href="../contact.php">Contact</a></li>
+
+            </ul>
+            <ul class="nav navbar-nav pull-right">
+                <li>
+                    <p class="navbar-text navbar-right">Signed in as <a href="#"
+                                                                        class="navbar-link"><?php echo $_SESSION['username'] ?></a>
+                    </p>
+                </li>
             </ul>
         </div>
         <!--/.nav-collapse -->
     </div>
 </nav>
+<div class="row">
 
-<div class="container">
-    <div class="container" id="crop-avatar">
-        <!-- Cropping modal -->
-        <div class="modal fade" id="avatar-modal"  tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button class="close" data-dismiss="modal"
-                                type="button">&times;</button>
-                        <h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="avatar-body">
+    <div class="col-lg-12 banner">
+        <div class="container">
+            <div>
+                <h1>Report Found Item</h1>
 
-                            <!-- Upload image and data -->
-                            <div class="avatar-upload">
-                                <input class="avatar-src" name="avatar_src" type="hidden">
-                                <input class="avatar-data" name="avatar_data" type="hidden">
-                                <label for="avatarInput">Local upload</label>
-                                <input class="avatar-input" id="avatarInput" name="avatar_file"
-                                       type="file">
-                            </div>
-
-                            <!-- Crop and preview -->
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <div class="avatar-wrapper"></div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="avatar-preview preview-lg"></div>
-                                    <div class="avatar-preview preview-md"></div>
-                                    <div class="avatar-preview preview-sm"></div>
-                                </div>
-                            </div>
-
-                            <div class="row avatar-btns">
-                                <div class="col-md-9">
-                                    <div class="btn-group">
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="-90" type="button"
-                                                title="Rotate -90 degrees">Rotate Left
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="-15" type="button">-15deg
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="-30" type="button">-30deg
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="-45" type="button">-45deg
-                                        </button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="90" type="button"
-                                                title="Rotate 90 degrees">Rotate Right
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="15" type="button">15deg
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="30" type="button">30deg
-                                        </button>
-                                        <button class="btn btn-primary" data-method="rotate"
-                                                data-option="45" type="button">45deg
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <button class="btn btn-primary btn-block avatar-save"
-                                            type="submit">Done
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-default" data-dismiss="modal" type="button">
-                            Close
-                        </button>
-                    </div>
-
-                </div>
+                <p>
+                    You will be asked for various details of the item you found.
+                    Fill in the information using the most understandable english, avoid use of huge terms which may not
+                    be hard to interprete.
+                    If at any point you have a query please email the support team: support@reportmyloss.com
+                </p>
             </div>
         </div>
-        <!-- /.modal -->
     </div>
+
+</div>
+<div class="container">
     <div class="row">
         <div class="col-md-9">
-            <div class="">
-                <div>
-                    <h1>Report Lost Item</h1>
-
-                    <p>
-                        You will be asked for various details of the loss,
-                        but don't worry if you do not have it all to hand now,
-                        it can be easily saved to return to update later.
-                        If at any point you have a query please email the support team: support@reportmyloss.com
-                    </p>
-                </div>
-            </div>
-            <ol class="breadcrumb">
-                <li><a href="../index.php">Home</a></li>
-                <li class="Report Lost">Library</li>
-            </ol>
             <div class="panel panel-success">
                 <div class="panel-heading">
                     <h3>Item Information</h3>
@@ -380,28 +335,20 @@ if (isset($_POST['report-found'])) {
                                     Short, generic description - example: "Large Black Lab" or "Smart Phone"
                                 </small>
                                 <textarea class="span12 form-control" name="name" rows="3" placeholder="What's up?"
-                                          ></textarea>
+                                    ></textarea>
                                 <h5>Specific Description:</h5>
                                 <small>Detailed Description: Name, Size, Weight, Type, Contents</small>
                                 <textarea class="span12 form-control" name="description" rows="5"
                                           placeholder="What's up?"></textarea>
                                 <br>
-
-                                <!-- Current avatar -->
-                                <div class="avatar-view" id="photo-upload" title="Change the avatar">
-                                    <img src="../img/lost_found_sign.jpg" alt="Avatar">
-                                </div>
-
-                                <!-- Loading state -->
-                                <div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
-                                <!--<div class="img-view">
-                                    <img src="#" id="img-preview" name="img-preview" alt="Item Image" width="100px"
+                                <div class="img-view">
+                                    <img src="../img/lost_found_sign.jpg" id="img-preview" name="img-preview"
+                                         alt="Item Image" width="100px"
                                          height="100px"/>
-                                </div><br>-->
-                                <input  value="Upload Picture" type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#avatar-modal">
-
-                                <!--<input type="file" value="Upload Photo" id="fileToUpload" name="fileToUpload"
-                                       class="btn btn-success btn-block" onchange="readURL(this)"/>-->
+                                </div>
+                                <br>
+                                <input type="file" value="Upload Photo" id="fileToUpload" name="fileToUpload"
+                                       class="btn btn-success btn-block" onchange="readURL(this)"/>
                             </div>
                         </div>
 
@@ -419,7 +366,7 @@ if (isset($_POST['report-found'])) {
                                     <h5>Address (If Any):</h5>
                                     <textarea class="span12 form-control" rows="2" name="address"
                                               placeholder="Please fill in the street number and address"
-                                              ></textarea>
+                                        ></textarea>
                                     <h5>Specific Location:</h5>
                                     <small>
                                         Please describe the exact location where you believe
@@ -428,7 +375,7 @@ if (isset($_POST['report-found'])) {
                                     </small>
                                     <textarea class="span12 form-control" rows="2" placeholder="What's up?"
                                               name="specific-location"
-                                              ></textarea>
+                                        ></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <h5>District:</h5>
@@ -559,7 +506,7 @@ if (isset($_POST['report-found'])) {
                             <div class="form-group">
                                 <input class="form-control"
                                        placeholder="Your email address"
-                                       ="" type="email">
+                                ="" type="email">
                             </div>
 
                             <div class="form-group">

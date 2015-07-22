@@ -15,7 +15,7 @@ if(!empty($_GET['email']) && !empty($_GET['token'])){
             $activateUser = $mysqli->query("UPDATE Users SET Activation='1' WHERE email='$email'");
             if($activateUser){
                 echo "Activation Complete";
-                header("Location:index.php");
+                header("Location:login.php");
             }
         }else{
             echo "Please Check That You Are Using A Valid Link";

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 include_once "../utils/db_connect.php";
 
 $db = Database::getInstance();
@@ -17,17 +19,10 @@ $mysqli = $db->getConnection();
     <link rel="stylesheet" type="text/css" href="../css/style.css">
     <link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.css">
+    <link href="../css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="container">
-    <!--<div class="row" id="header">
-        <div class="col-md-4 col-xs-4">
-            Logo Here
-        </div>
-        <div class="col-md-8 col-xs-8">
-            Google
-        </div>
-    </div>-->
     <div class="row">
         <div class="col-md-12">
             <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -40,22 +35,39 @@ $mysqli = $db->getConnection();
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
+                        <a href="../index.php" class="navbar-brand">Lost And Found</a>
                     </div>
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="#about">About</a></li>
-                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="../index.php">Home</a></li>
+                            <li><a href="../categories.php">Categories</a></li>
+                            <?php
+                            if(isset($_SESSION['user_type'])){
+                                if($_SESSION['user_type'] == 'admin') {
+                                    echo '<li><a href="../admin.php">Admin</a></li>';
+                                }
+                            }
+                            ?>
+                            <li><a href="../about.php">About</a></li>
+                            <li><a href="../contact.php">Contact</a></li>
+
                         </ul>
                         <ul class="nav navbar-nav pull-right">
-                            <li>
-                                <form class="navbar-form" role="search">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Search">
-                                    </div>
-                                    <button type="submit" class="btn btn-default">Submit</button>
-                                </form>
-                            </li>
+                            <?php
+                            if (isset($_SESSION['username'])) {
+                                echo '<li>
+                                            <img src="uploads/avatar.png" height="50px" width="50px"
+                                                 class="profile-photo img img-circle">
+                                          </li>';
+                                echo '<li><p class="navbar-text navbar-right">
+                                            <a href="#"  class="navbar-link">' . $_SESSION['username'] . '</a>
+                                          </p></li>';
+
+                                echo '<li><a href="logout.php"> <span><i class="fa fa-power-off fa-fw fa-2x"></i> </span></a></li>';
+                            }else{
+                                echo '<li><a href="login.php">Login / Register</a></li>';
+                            }
+                            ?>
                         </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -63,6 +75,20 @@ $mysqli = $db->getConnection();
             </nav>
         </div>
     </div>
+</div>
+<div class="row">
+
+    <div class="col-lg-12 banner">
+        <div class="container">
+            <h2>Animals</h2>
+            <p>
+                Here you can find any pets or animals that you lost.
+            </p>
+        </div>
+    </div>
+
+</div>
+<div class="container">
     <ol class="breadcrumb">
         <li><a href="index.php">Home</a></li>
         <li><a href="../categories.php">Category</a></li>
@@ -75,10 +101,10 @@ $mysqli = $db->getConnection();
                     <div class="col-md-12">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs pull-right" id="list-select" role="tablist">
-                            <li><a href="#list" role="tab" data-toggle="tab"><i
+                            <li class="active"><a href="#list" role="tab" data-toggle="tab"><i
                                         class="fa fa-list"></i></a>
                             </li>
-                            <li class="active"><a href="#grid" role="tab" data-toggle="tab"><i class="fa fa-th"></i></a>
+                            <li><a href="#grid" role="tab" data-toggle="tab"><i class="fa fa-th"></i></a>
                             </li>
                         </ul>
                     </div>
@@ -89,61 +115,48 @@ $mysqli = $db->getConnection();
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div class="tab-pane list" id="list">
-                        <table class="table table-bordered table-responsive" id="container">
+                    <div class="tab-pane active" id="list">
+                        <table class="table" id="container" style="background-color: #ffffff">
                             <thead>
                             <tr>
-                                <th>Item Id</th>
-                                <th>User Image</th>
-                                <th class="hidden-sm">About</th>
-                                <th>Status</th>
+                                <th>Photo</th>
+                                <th class="hidden-sm">Description</th>
+                                <th>Category</th>
                                 <th>Contacts</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php
-                            $getAllAnimals = $mysqli->query("SELECT * FROM items WHERE Category = '1'");
+                            $getAllAnimals = $mysqli->query("SELECT items.*, DATE_FORMAT(items.DatePosted,'%b %d %Y') AS DatePosted FROM items WHERE Category = '1'");
+
                             if ($getAllAnimals) {
                                 if (mysqli_num_rows($getAllAnimals) > 0) {
                                     while ($rows = mysqli_fetch_array($getAllAnimals, MYSQL_ASSOC)) {
+                                        $getCategory = $mysqli->query("SELECT * FROM categories WHERE catId ='".$rows['Category']."' ");
+                                        $getSubCategory = $mysqli->query("SELECT * FROM subcategories WHERE catId ='".$rows['Subcategory']."' ");
+                                        $getUser = $mysqli->query("SELECT * FROM Users WHERE userId='".$rows['userId']."'");
+                                        $userRow = mysqli_fetch_array($getUser, MYSQL_ASSOC);
+                                        if(!$getSubCategory || !$getCategory) printf("Error occurred %s", $mysqli->error);
+                                        $subcatRow = mysqli_fetch_array($getSubCategory, MYSQL_ASSOC);
+                                        $catRow = mysqli_fetch_array($getCategory, MYSQL_ASSOC);
                                         echo '<tr>
-                                <td>' . $rows["itemId"] . '</td>
-                                <td width="140px">
-                                    <img class="" src="../uploads/' . $rows["Photo"] . '" alt="" width="130px" height="130px">
+                                <td>
+                                    <img class="" src="../uploads/' . $rows["Photo"] . '" alt="" width="80px" height="80px">
                                 </td>
                                 <td class="td-width">
-                                    <h3><a href="#">' . $rows["Name"] . '</a></h3>
-                                        <p>' . $rows["Description"] . '</p>
-                                    <small class="hex">Posted' . $rows["DatePosted"] . '</small>
+                                    <h4><a href="../details.php?id='.$rows['itemId'].'">' . $rows["Name"] . '</a></h4>
+                                        <p class="description">' . $rows["Description"] . '</p>
+                                    <i class="fa fa-calendar"></i><small class=""> Posted ' . $rows["DatePosted"] . '</small>
                                 </td>
                                 <td>
-                                    <span class="label label-success">Success</span>
+                                    <span class="label label-success">'.$catRow['Category'].'</span>&nbsp;
+                                    <span class="label label-success">'.$subcatRow['Subcategory'].'</span>
                                 </td>
                                 <td>
-                                    <ul class="list-inline s-icons">
-                                        <li>
-                                            <a data-placement="top" data-toggle="tooltip" class="tooltips" data-original-title="Facebook" href="#">
-                                                <i class="fa fa-facebook"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a data-placement="top" data-toggle="tooltip" class="tooltips" data-original-title="Twitter" href="#">
-                                                <i class="fa fa-twitter"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a data-placement="top" data-toggle="tooltip" class="tooltips" data-original-title="Dropbox" href="#">
-                                                <i class="fa fa-dropbox"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a data-placement="top" data-toggle="tooltip" class="tooltips" data-original-title="Linkedin" href="#">
-                                                <i class="fa fa-linkedin"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <span><a href="#">info@example.com</a></span>
-                                    <span><a href="#">www.htmlstream.com</a></span>
+                                    <span>'.$userRow["Firstname"].'</span>
+                                    <span>'.$userRow["Lastname"].'</span><br>
+                                    <span>Phone : '.$userRow["Phone"].'</span><br>
+                                    <span>Email : '.$userRow["Email"].'</span>
                                 </td>
                             </tr>';
                                     }
@@ -158,36 +171,22 @@ $mysqli = $db->getConnection();
                             </tbody>
                         </table>
                     </div>
-                    <div class="tab-pane active" id="grid">
+                    <div class="tab-pane" id="grid" style="">
                         <div class="row">
                             <?php
                             $getAllAnimals = $mysqli->query("SELECT * FROM items WHERE Category = '1'");
                             if ($getAllAnimals) {
                                 if (mysqli_num_rows($getAllAnimals) > 0) {
                                     while ($rows = mysqli_fetch_array($getAllAnimals, MYSQL_ASSOC)) {
-                                        echo '<div class="col-sm-3 col-lg-3 col-md-3">
-                                                    <div class="thumbnail">
-                                                        <img src="../uploads/'.$rows["Photo"].'" width="320px" height="150px" alt="">
+                                        echo '<div class="col-sm-2 col-lg-2 col-md-2">
+                                                    <div class="">
+                                                        <img src="../uploads/' . $rows["Photo"] . '" width="120px" height="120px" alt="">
 
                                                         <div class="caption">
-                                                            <h4 class="pull-right">$24.99</h4>
-                                                            <h4><a href="#">First Product</a>
-                                                            </h4>
-
-                                                            <p>See more snippets like this online store item at <a target="_blank"
-                                                                                                                   href="http://www.bootsnipp.com">Bootsnipp
-                                                                    - http://bootsnipp.com</a>.</p>
-                                                        </div>
-                                                        <div class="ratings">
-                                                            <p class="pull-right">15 reviews</p>
-
-                                                            <p>
-                                                                <span class="glyphicon glyphicon-star"></span>
-                                                                <span class="glyphicon glyphicon-star"></span>
-                                                                <span class="glyphicon glyphicon-star"></span>
-                                                                <span class="glyphicon glyphicon-star"></span>
-                                                                <span class="glyphicon glyphicon-star"></span>
-                                                            </p>
+                                                               <h4><a href="../details.php?id='.$rows['itemId'].'">'.$rows['Name'].'</a></h4>
+                                                               <p>
+                                                                    Type : '.$rows['Type'].'
+                                                               </p>
                                                         </div>
                                                     </div>
                                                 </div>';
@@ -213,43 +212,99 @@ $mysqli = $db->getConnection();
 
                         <div>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.
+                                Lost and Found is an online portal for enabling people to locate items they or items
+                                they found.
+                                The main reason as to why this initiative is to create and generate a platform to
+                                simplify the life of an average Ugandan who has lost hope after losing a valuable item.
                             </p>
 
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div><h3>About Us</h3>
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div><h3>Latest News</h3>
+                            <div id="news-feed" class="news-feed">
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object" src="../Images/testimonial2.jpg" width="50px"
+                                                 height="50px" alt="...">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
+                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
+                                                reprehenderit in voluptate velit.
+                                            </small>
+
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object" src="../Images/testimonial1.jpg" width="50px"
+                                                 height="50px" alt="...">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
+                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
+                                                reprehenderit in voluptate velit.
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object" src="../Images/testimonial2.jpg" width="50px"
+                                                 height="50px" alt="...">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
+                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
+                                                reprehenderit in voluptate velit.
+                                            </small>
+
+                                        </div>
+                                    </div>
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object" src="../Images/testimonial1.jpg" width="50px"
+                                                 height="50px" alt="...">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
+                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
+                                                reprehenderit in voluptate velit.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div><h3>Contact Us</h3>
 
                         <div>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.
+                            <address class="md-margin-bottom-40">
+                                25, Lorem Lis Street, Orange <br>
+                                California, US <br>
+                                Phone: 800 123 3456 <br>
+                                Fax: 800 123 3456 <br>
+                                Email: <a href="mailto:info@anybiz.com" class="">info@anybiz.com</a>
+                            </address>
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div><h3>About Us</h3>
-
-                        <div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>About Us</h3>
+                    <div><h3>Subscribe</h3>
 
                         <div>
                             <form method="post"><p>
@@ -279,13 +334,19 @@ $mysqli = $db->getConnection();
 
 </div>
 <script type="text/javascript" src="../js/jquery-1.11.2.js"></script>
+<script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
 <script type="text/javascript" src="../js/bootstrap.js"></script>
 <script src="../js/jquery.dataTables.min.js"></script>
 <script src="..js/dataTables.bootstrap.js"></script>
 
 <script>
+    $('#news-feed').mCustomScrollbar({
+        theme: "dark-thick"
+    })(jQuery);
+</script>
+<script>
     $(document).ready(function () {
-        //$('#container').DataTable();
+        $('#container').DataTable();
     });
 </script>
 </body>

@@ -1,8 +1,15 @@
 <?php
-include_once '../utils/db_connect.php';
+session_start();
+if($_SESSION['user_type'] != 'admin') header("Location:index.php");
+?>
+
+<?php
+include_once 'utils/db_connect.php';
 
 $db = Database::getInstance();
 $mysqli = $db->getConnection();
+
+$user_id =  $_SESSION['userId'];
 
 if (isset($_POST['report-found'])) {
     $brand;
@@ -12,7 +19,6 @@ if (isset($_POST['report-found'])) {
     $date_posted = $year . '-' . $month . '-' . $day;
     $name = $_POST['name'];
     $description = $_POST['description'];
-    $type = "Found";
     $color = $_POST['color'];
     $category = $_POST['category'];
     $subcategory = $_POST['subcategory'];
@@ -30,17 +36,17 @@ if (isset($_POST['report-found'])) {
     $venue = $_POST['venue'];
     $userId = "admin";
 
-    $target_dir = "../uploads/found/";
+    $target_dir = "uploads/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-    $temp = explode(".",basename($_FILES["fileToUpload"]["name"]));
-    $photo = rand(1,99999) . '.' .end($temp);
+    $temp = explode(".", basename($_FILES["fileToUpload"]["name"]));
+    $photo = rand(1, 99999) . '.' . end($temp);
     $uploadOk = 1;
     $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 // Check if image file is a actual image or fake image
 
     $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
     if ($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
+        // echo "File is an image - " . $check["mime"] . ".";
         $uploadOk = 1;
     } else {
         echo "File is not an image.";
@@ -58,8 +64,8 @@ if (isset($_POST['report-found'])) {
         $uploadOk = 0;
     }
 // Allow certain file formats
-    if ($imageFileType != "jpg" && $imageFileType != "JPG"  && $imageFileType != "png" && $imageFileType != "PNG"
-    && $imageFileType != "jpeg" && $imageFileType != "JPEG" && $imageFileType != "gif" && $imageFileType != "GIF"
+    if ($imageFileType != "jpg" && $imageFileType != "JPG" && $imageFileType != "png" && $imageFileType != "PNG"
+        && $imageFileType != "jpeg" && $imageFileType != "JPEG" && $imageFileType != "gif" && $imageFileType != "GIF"
 
     ) {
         echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
@@ -70,8 +76,8 @@ if (isset($_POST['report-found'])) {
         echo "Sorry, your file was not uploaded.";
 // if everything is ok, try to upload file
     } else {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir."".$photo)) {
-            echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_dir . "" . $photo)) {
+            // echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
@@ -79,8 +85,8 @@ if (isset($_POST['report-found'])) {
 
 
     $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId)
-                            VALUES ('$name','$description','$type','$category','$subcategory','$brand','$serial',
-                            '$model','$photo','$color','$venue','$date_posted','$district','$town','$specific_location','$userId')";
+                            VALUES ('$name','$description','$category','$subcategory','$brand','$serial',
+                            '$model','$photo','$color','$venue','$date_posted','$district','$town','$specific_location','$user_id')";
 
     if ($mysqli->query($createFoundItem)) {
         echo "<script>alert('Item Created')</script>";
@@ -98,10 +104,13 @@ if (isset($_POST['report-found'])) {
     <title>
         Uganda Police - Lost And Found
     </title>
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
-    <script src="../js/functions.js"></script>
-    <script src="../js/ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/cropper.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/main.js"></script>
+    <script src="js/functions.js"></script>
+    <script src="js/ajax.js"></script>
     <script type="text/javascript">
         function readURL(input) {
             if (input.files && input.files[0]) {
@@ -117,39 +126,92 @@ if (isset($_POST['report-found'])) {
         }
     </script>
 </head>
-<body onload="doAjax('../utils/get_categories.php', '', 'populateCategories', 'post', '1');">
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Project name</a>
+<body onload="doAjax('utils/get_categories.php', '', 'populateCategories', 'post', '1');">
+<div class="container">
+    <!--<div class="row" id="header">
+        <div class="col-md-4 col-xs-4">
+            Logo Here
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+        <div class="col-md-8 col-xs-8">
+            Google
         </div>
-        <!--/.nav-collapse -->
+    </div>-->
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="index.php" class="navbar-brand">Lost And Found</a>
+                    </div>
+                    <div id="navbar" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="index.php">Home</a></li>
+                            <li><a href="categories.php">Categories</a></li>
+                            <li><a href="about.php">About</a></li>
+                            <li><a href="contact.php">Contact</a></li>
+
+                        </ul>
+                        <ul class="nav navbar-nav pull-right">
+                            <?php
+                            if (isset($_SESSION['username'])) {
+                                echo '<li>
+                                            <img src="uploads/avatar.png" height="50px" width="50px"
+                                                 class="profile-photo img img-circle">
+                                          </li>';
+                                echo '<li><p class="navbar-text navbar-right">
+                                            <a href="#"  class="navbar-link">' . $_SESSION['username'] . '</a>
+                                          </p></li>';
+
+                                echo '<li><a href="logout.php"> <span><i class="fa fa-power-off fa-fw fa-2x"></i> </span></a></li>';
+                            } else {
+                                echo '<li><a href="login.php">Login / Register</a></li>';
+                            }
+                            ?>
+                        </ul>
+                    </div>
+                    <!--/.nav-collapse -->
+                </div>
+            </nav>
+        </div>
     </div>
-</nav>
+</div>
+<div class="row">
+
+    <div class="col-lg-12 banner">
+        <div class="container">
+            <h1>Edit Property</h1>
+
+            <p>
+                If at any point you have a query please email the support team: support@reportmyloss.com
+            </p>
+        </div>
+    </div>
+
+</div>
 
 <div class="container">
     <div class="row">
         <div class="col-md-9">
+            <div class="">
+
+            </div>
+            <ol class="breadcrumb">
+                <li><a href="admin.php">Home</a></li>
+                <li class="active">Edit Property</li>
+            </ol>
             <div class="panel panel-success">
                 <div class="panel-heading">
                     <h3>Item Information</h3>
                 </div>
                 <div class="panel-body">
-                    <form method="post" action="Found.php" enctype="multipart/form-data">
+                    <form method="post" action="" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Date The Item Was Found</h5>
@@ -228,15 +290,14 @@ if (isset($_POST['report-found'])) {
                                 <h5>Category</h5>
 
                                 <select class="form-control" name="category" id="category"
-                                        onchange="resetValues();doAjax('../utils/get_subcategories.php', 'catId='+getValue('category'), 'populateSubcategories', 'post', '1')">
-                                    <option value="0">--Choose A Category</option>
+                                        onchange="resetValues();doAjax('utils/get_subcategories.php', 'catId='+getValue('category'), 'populateSubcategories', 'post', '1')">
+                                    <option value="0">Choose A Category</option>
                                 </select>
 
                                 <div id="loading" style="display: none;"></div>
                                 <h5>Subcategory</h5>
                                 <select class="form-control" id="subcategory" name="subcategory" disabled="disabled"
-                                        onchange="doAjax('../utils/get_brands.php', 'catId='+getValue('category')+'&subcatId='+getValue('subcategory'), 'populateBrands', 'post', '1')">
-                                    <!-- <option value="0">--Choose A Subcategory--</option>-->
+                                        onchange="doAjax('utils/get_brands.php', 'catId='+getValue('category')+'&subcatId='+getValue('subcategory'), 'populateBrands', 'post', '1')">
                                 </select>
                                 <h5>Choose A Brand</h5>
                                 <select id="brand" name="brand" class="form-control" disabled="disabled">
@@ -262,14 +323,18 @@ if (isset($_POST['report-found'])) {
                                     Short, generic description - example: "Large Black Lab" or "Smart Phone"
                                 </small>
                                 <textarea class="span12 form-control" name="name" rows="3" placeholder="What's up?"
-                                          required></textarea>
+                                    ></textarea>
                                 <h5>Specific Description:</h5>
                                 <small>Detailed Description: Name, Size, Weight, Type, Contents</small>
                                 <textarea class="span12 form-control" name="description" rows="5"
-                                          placeholder="What's up?" required></textarea>
+                                          placeholder="What's up?"></textarea>
                                 <br>
-                                <img src="#" id="img-preview" name="img-preview" alt="Item Image" width="100px" height="100px"/>
-                                <input type="file" value="Upload Photo" id="fileToUpload" name="fileToUpload"
+                                <div class="img-view">
+                                    <img src="img/lost_found_sign.jpg" id="img-preview" name="img-preview" alt="Item Image" width="100px"
+                                         height="100px"/>
+                                </div><br>
+
+                                <input type="file" value="Upload Photo" required="" id="fileToUpload" name="fileToUpload"
                                        class="btn btn-success btn-block" onchange="readURL(this)"/>
                             </div>
                         </div>
@@ -280,7 +345,7 @@ if (isset($_POST['report-found'])) {
                 <div class="col-md-12">
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            Location Information
+                            <h3>Location Information</h3>
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -288,7 +353,7 @@ if (isset($_POST['report-found'])) {
                                     <h5>Address (If Any):</h5>
                                     <textarea class="span12 form-control" rows="2" name="address"
                                               placeholder="Please fill in the street number and address"
-                                              required></textarea>
+                                        ></textarea>
                                     <h5>Specific Location:</h5>
                                     <small>
                                         Please describe the exact location where you believe
@@ -297,7 +362,7 @@ if (isset($_POST['report-found'])) {
                                     </small>
                                     <textarea class="span12 form-control" rows="2" placeholder="What's up?"
                                               name="specific-location"
-                                              required></textarea>
+                                        ></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <h5>District:</h5>
@@ -332,6 +397,42 @@ if (isset($_POST['report-found'])) {
                 <div class="panel-heading">
                     Pro Tips
                 </div>
+                <div class="list-group">
+                    <p class="list-group-item pro-tip">
+
+                        We recommend omitting one important, but not
+                        obvious characteristic about the found property or
+                        pet to help ensure the correct owner is identified.
+
+                    </p>
+
+                    <p class="list-group-item pro-tip">
+
+                        When someone contacts you about your found ad,
+                        this omission will help you identify the true owner,
+                        and avoid scam artists.
+
+                    </p>
+
+                    <p class="list-group-item pro-tip">
+
+                        For pets, we recommend that you not reveal the gender.
+                        If you are ever in doubt, take the item to
+                        your local law enforcement department.
+
+                    </p>
+
+                    <p class="list-group-item pro-tip">
+
+                        We also recommmend that you fill the information to best of your ability.
+                        Inaccurate information will lead to a more delayed time to find your property
+                        or not at all.
+
+                    </p>
+                </div>
+                <div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -354,7 +455,7 @@ if (isset($_POST['report-found'])) {
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div><h3>About Us</h3>
+                <div><h3>Useful Links</h3>
 
                     <div>
                         <p>
@@ -367,20 +468,23 @@ if (isset($_POST['report-found'])) {
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div><h3>About Us</h3>
+                <div><h3>Contact Us</h3>
 
                     <div>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat.
+                        <address class="md-margin-bottom-40">
+                            25, Lorem Lis Street, Orange <br>
+                            California, US <br>
+                            Phone: 800 123 3456 <br>
+                            Fax: 800 123 3456 <br>
+                            Email: <a href="mailto:info@anybiz.com" class="">info@anybiz.com</a>
+                        </address>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <div><h3>About Us</h3>
+                <div><h3>Subscribe</h3>
 
                     <div>
                         <form method="post"><p>
@@ -389,7 +493,7 @@ if (isset($_POST['report-found'])) {
                             <div class="form-group">
                                 <input class="form-control"
                                        placeholder="Your email address"
-                                       required="" type="email">
+                                ="" type="email">
                             </div>
 
                             <div class="form-group">
@@ -408,6 +512,15 @@ if (isset($_POST['report-found'])) {
     </div>
 </div>
 </body>
-<script type="text/javascript" src="../js/jquery-1.11.2.js"></script>
-<script type="text/javascript" src="../js/boostrap.js"></script>
+<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script src="js/cropper.min.js"></script>
+<!--<script>
+    $('.img-view > img').cropper({
+        aspectRatio: 16 / 9,
+        crop: function (data) {
+            // Output the result data for cropping image.
+        }
+    });
+</script>-->
 </html>

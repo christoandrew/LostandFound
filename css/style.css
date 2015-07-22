@@ -4,17 +4,64 @@
     font-weight: normal;
     font-style: normal;
 }
-
+@font-face {
+    font-family: 'Modeka';
+    src: url('../fonts/Modeka.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
-    font-family: "RobotoCondensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding-top: 60px;
+    font-family: Helvetica Neue, Helvetica, Arial, "sans-serif";
+    padding-top: 65px;
     background-color: #ECF0F1;
 /*    background-color: #101010;*/
     font-size: medium;
 }
-.select-date{
+.font-small{
+    font-size: small;
+}
+.news-feed{
+    overflow: auto;
+    position: relative;
+    max-height: 200px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.select-date {
 
+}
+.caption-slider{
+    font-size: large;
+    font-family: "RobotoCondensed"
+
+}
+.caption-slider h1{
+    -vendor-animation-duration: 3s;
+    -vendor-animation-delay: 2s;
+    -vendor-animation-iteration-count: infinite;
+}
+.caption-slider p{
+      -vendor-animation-duration: 3s;
+      -vendor-animation-delay: 5s;
+      -vendor-animation-iteration-count: infinite;
+  }
+.tabs{
+    background-color: #ffffff;
+}
+.description{
+    font-size: small;
+    font-family: Helvetica Neue, Helvetica, Arial, "sans-serif";
+}
+.banner{
+   /* height: 150px;*/
+    background-color: #66afe9;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.breadcrumb{
+    background-color: #1b2426;
 }
 ul#list-select li{
     display: inline-block;
@@ -23,7 +70,25 @@ ul#list-select li{
 .list{
     background:  #eeefff;
 }
-
+.main-gallery{
+    width: 100%;
+    height: 100%;
+}
+.navbar-inverse{
+    height: 70px;
+    line-height: 30px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus {
+    color: #fff;
+    background-color: #a4b2cb;
+}
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+    border-color: #101010;
+}
 input, textarea, keygen, select, button {
     margin: 0em;
     font: normal normal normal 13.3333330154419px/normal Arial;
