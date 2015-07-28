@@ -44,13 +44,6 @@ $mysqli = $db->getConnection();
                         <ul class="nav navbar-nav">
                             <li><a href="index.php">Home</a></li>
                             <li><a href="categories.php">Categories</a></li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Report</a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="Report/Lost.php">Lost Item</a></li>
-                                    <li><a href="utils/Found.php">Found Item</a></li>
-                                </ul>
-                            </li>
                             <li><a href="about.php">About</a></li>
                             <li><a href="contact.php">Contact</a></li>
 
@@ -109,7 +102,7 @@ $mysqli = $db->getConnection();
                                 $info = array(
                                     'username' => $username,
                                     'email' => $email,
-                                    'token' => $verification_token
+                                    'code' => $verification_token
                                 );
                                 $updateStatus = $mysqli->query("UPDATE items SET verified=1, verification_code='$verification_token' WHERE itemId = '$id'");
                                 if($updateStatus){

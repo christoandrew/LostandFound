@@ -1,11 +1,19 @@
 <?php
+session_start();
+if(isset($_GET['id'])){
+    $id = $_GET['id'];
+}
+if ($_SESSION['username'] == '' || $_SESSION['username'] == null){
+    header("Location:login.php?return_url=verify.php&id=".$id);
+}
+
 include_once "utils/db_connect.php";
 
 $db = Database::getInstance();
 $mysqli = $db->getConnection();
 
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,6 +24,7 @@ $mysqli = $db->getConnection();
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/dataTables.bootstrap.css">
+    <link href="css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="container">
@@ -31,7 +40,7 @@ $mysqli = $db->getConnection();
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a href="index.php" class="navbar-brand">Lost And Found</a>
+                        <a href="../index.php" class="navbar-brand">Lost And Found</a>
                     </div>
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
@@ -45,10 +54,10 @@ $mysqli = $db->getConnection();
                             }
                             ?>
                             <li><a href="about.php">About</a></li>
-                            <li ><a href="contact.php">Contact</a></li>
+                            <li><a href="contact.php">Contact</a></li>
 
                         </ul>
-                        <ul class="nav navbar-nav pull-right">
+                        < <ul class="nav navbar-nav pull-right">
                             <?php
                             if (isset($_SESSION['username'])) {
                                 echo '<li>
@@ -75,45 +84,72 @@ $mysqli = $db->getConnection();
 <div class="row">
 
     <div class="col-lg-12 banner">
+        <div class="container">
+            <h2>Verification</h2>
 
+            <p>
+                If you dont have or remember the serial number of your property fill in this form.
+            </p>
+        </div>
     </div>
 
 </div>
 <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="index.php">Home</a></li>
+        <li><a href="#" class="active">Verification</a></li>
+    </ol>
+
     <div class="row">
-        <div class="col-md-12">
-            <?php
-            if(isset($_GET['id'])){
-                $id = $_GET['id'];
+        <div class="col-md-5 col-md-offset-4" style="">
 
-                $delete = $mysqli->query("DELETE FROM items WHERE itemId = '$id'");
-                if($delete){
-                    echo '<div class="alert alert-success">Successfully Deleted <a href="manage-items.php">Back</a> </div>';
-                }else{
-                    echo '<div class="alert alert-danger">Error deleting item '.$mysqli->error.'</div>';
-                }
-            }
-            ?>
+            <label>Please fill in the form to the best of your information</label>
+            <form role="form" action="confirm-verification.php" method="post">
+                <div class="form-group">
+                    <label>Which town in the district did you lose this item?</label>
+                    <input type="text" name="district" class="form-control" placeholder="District Item was lost" required>
+                    <input type="hidden" value="<?php echo $id; ?>" name="id">
+                </div>
+                <div class="form-group">
+                    <label>Select the venue type from which you lost this property?</label>
+                    <select class="form-control" name="venue_type" required="required">
+                        <option>Select a venue type</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Please specify the approximate location where you left this item.</label>
+                    <input type="text" class="form-control" name="specific-location" required="" placeholder="For example under a chair or at the balcony or near a specific shop">
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="verify" value="Submit" class="btn btn-success pull-right"><br><br>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="container">
-        <div class="col-sm-12 footer2">
-            <p>&copy; 2015 <a href="#">iCona Systems</a>, Inc. All rights reserved.</p>
+
+    <div class="row">
+        <div class="container">
+            <div class="col-sm-12 footer2">
+                <p>&copy; 2015 <a href="#">iCona Systems</a>, Inc. All rights reserved.</p>
+            </div>
         </div>
+
+
     </div>
 
-
 </div>
+<script type="text/javascript" src="../js/jquery-1.11.2.js"></script>
+<script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap.js"></script>
+<script src="../js/jquery.dataTables.min.js"></script>
+<script src="..js/dataTables.bootstrap.js"></script>
 
-</div>
-<script type="text/javascript" src="js/jquery-1.11.2.js"></script>
-<script type="text/javascript" src="js/bootstrap.js"></script>
-<script src="js/jquery.dataTables.min.js"></script>
-<script src="js/dataTables.bootstrap.js"></script>
-
+<script>
+    $('#news-feed').mCustomScrollbar({
+        theme: "dark-thick"
+    })(jQuery);
+</script>
 <script>
     $(document).ready(function () {
         $('#container').DataTable();

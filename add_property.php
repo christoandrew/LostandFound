@@ -84,9 +84,9 @@ if (isset($_POST['report-found'])) {
     }
 
 
-    $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId)
+    $createFoundItem = "INSERT INTO items(Name,Description,Type,Category,Subcategory,Brand,Serial,Model,Photo,Color,VenueType,DatePosted,District,Town,SpecificLocation,userId,verified,verification_code)
                             VALUES ('$name','$description','$category','$subcategory','$brand','$serial',
-                            '$model','$photo','$color','$venue','$date_posted','$district','$town','$specific_location','$user_id')";
+                            '$model','$photo','$color','$venue','$date_posted','$district','$town','$specific_location','$user_id',0,NULL)";
 
     if ($mysqli->query($createFoundItem)) {
         echo "<script>alert('Item Created')</script>";
@@ -154,6 +154,13 @@ if (isset($_POST['report-found'])) {
                         <ul class="nav navbar-nav">
                             <li><a href="index.php">Home</a></li>
                             <li><a href="categories.php">Categories</a></li>
+                            <?php
+                            if(isset($_SESSION['user_type'])){
+                                if($_SESSION['user_type'] == 'admin') {
+                                    echo '<li class="active"><a href="admin.php">Admin</a></li>';
+                                }
+                            }
+                            ?>
                             <li><a href="about.php">About</a></li>
                             <li><a href="contact.php">Contact</a></li>
 
@@ -213,7 +220,7 @@ if (isset($_POST['report-found'])) {
                 <div class="panel-body">
                     <form method="post" action="" enctype="multipart/form-data">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 col">
                                 <h5>Date The Item Was Found</h5>
 
                                 <div class="form-inline">
@@ -303,7 +310,7 @@ if (isset($_POST['report-found'])) {
                                 <select id="brand" name="brand" class="form-control" disabled="disabled">
                                     <!--<option value="0">--Choose A Brand--</option>-->
                                 </select>
-                                <h5>If You Cant See Your Brand!</h5>
+                                <h5>If You Cant See Brand!</h5>
                                 <input type="text" id="specify-brand" name="specific-brand" placeholder="Specify Brand"
                                        class="form-control"/>
                                 <h5>Model</h5>
@@ -322,12 +329,12 @@ if (isset($_POST['report-found'])) {
                                 <small>
                                     Short, generic description - example: "Large Black Lab" or "Smart Phone"
                                 </small>
-                                <textarea class="span12 form-control" name="name" rows="3" placeholder="What's up?"
+                                <textarea class="span12 form-control" name="name" rows="3" placeholder=""
                                     ></textarea>
                                 <h5>Specific Description:</h5>
                                 <small>Detailed Description: Name, Size, Weight, Type, Contents</small>
                                 <textarea class="span12 form-control" name="description" rows="5"
-                                          placeholder="What's up?"></textarea>
+                                          placeholder=""></textarea>
                                 <br>
                                 <div class="img-view">
                                     <img src="img/lost_found_sign.jpg" id="img-preview" name="img-preview" alt="Item Image" width="100px"
@@ -356,11 +363,10 @@ if (isset($_POST['report-found'])) {
                                         ></textarea>
                                     <h5>Specific Location:</h5>
                                     <small>
-                                        Please describe the exact location where you believe
-                                        the item was lost or found. For example: under seat 22,
+                                         For example: under seat 22,
                                         classroom, locker.
                                     </small>
-                                    <textarea class="span12 form-control" rows="2" placeholder="What's up?"
+                                    <textarea class="span12 form-control" rows="2" placeholder=""
                                               name="specific-location"
                                         ></textarea>
                                 </div>
@@ -392,8 +398,8 @@ if (isset($_POST['report-found'])) {
                    id="report-found" name="report-found"/>
             </form>
         </div>
-        <div class="col-md-3 hidden-xs">
-            <div class="panel panel-default">
+        <div class="">
+            <!--div class="panel panel-default">
                 <div class="panel-heading">
                     Pro Tips
                 </div>
@@ -433,7 +439,7 @@ if (isset($_POST['report-found'])) {
                 <div>
 
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
     <br><br>

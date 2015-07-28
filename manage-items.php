@@ -42,9 +42,9 @@ $mysqli = $db->getConnection();
                             <li><a href="index.php">Home</a></li>
                             <li><a href="categories.php">Categories</a></li>
                             <?php
-                            if(isset($_SESSION['user_type'])){
-                                if($_SESSION['user_type'] == 'admin') {
-                                    echo '<li><a href="admin.php">Admin</a></li>';
+                            if (isset($_SESSION['user_type'])) {
+                                if ($_SESSION['user_type'] == 'admin') {
+                                    echo '<li class="active"><a href="admin.php">Admin</a></li>';
                                 }
                             }
                             ?>
@@ -64,7 +64,7 @@ $mysqli = $db->getConnection();
                                           </p></li>';
 
                                 echo '<li><a href="logout.php"> <span><i class="fa fa-power-off fa-fw fa-2x"></i> </span></a></li>';
-                            }else{
+                            } else {
                                 echo '<li><a href="login.php">Login / Register</a></li>';
                             }
                             ?>
@@ -80,9 +80,10 @@ $mysqli = $db->getConnection();
 
     <div class="col-lg-12 banner">
         <div class="container">
-            <h2>Animals</h2>
+            <h2>Manage Property</h2>
+
             <p>
-                Here you can find any pets or animals that you lost.
+                Edit or delete property which has been taken or verified.
             </p>
         </div>
     </div>
@@ -119,21 +120,23 @@ $mysqli = $db->getConnection();
                                 <th>Photo</th>
                                 <th class="hidden-sm">Description</th>
                                 <th>Category</th>
+                                <th>Verified</th>
+                                <th>Verification Code</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php
-                            $getAllAnimals = $mysqli->query("SELECT items.*, DATE_FORMAT(items.DatePosted,'%b %d %Y') AS DatePosted FROM items WHERE Category = '1'");
+                            $getAllAnimals = $mysqli->query("SELECT items.*, DATE_FORMAT(items.DatePosted,'%b %d %Y') AS DatePosted FROM items");
 
                             if ($getAllAnimals) {
                                 if (mysqli_num_rows($getAllAnimals) > 0) {
                                     while ($rows = mysqli_fetch_array($getAllAnimals, MYSQL_ASSOC)) {
-                                        $getCategory = $mysqli->query("SELECT * FROM categories WHERE catId ='".$rows['Category']."' ");
-                                        $getSubCategory = $mysqli->query("SELECT * FROM subcategories WHERE catId ='".$rows['Subcategory']."' ");
-                                        $getUser = $mysqli->query("SELECT * FROM Users WHERE userId='".$rows['userId']."'");
+                                        $getCategory = $mysqli->query("SELECT * FROM categories WHERE catId ='" . $rows['Category'] . "' ");
+                                        $getSubCategory = $mysqli->query("SELECT * FROM subcategories WHERE catId ='" . $rows['Subcategory'] . "' ");
+                                        $getUser = $mysqli->query("SELECT * FROM Users WHERE userId='" . $rows['userId'] . "'");
                                         $userRow = mysqli_fetch_array($getUser, MYSQL_ASSOC);
-                                        if(!$getSubCategory || !$getCategory) printf("Error occurred %s", $mysqli->error);
+                                        if (!$getSubCategory || !$getCategory) printf("Error occurred %s", $mysqli->error);
                                         $subcatRow = mysqli_fetch_array($getSubCategory, MYSQL_ASSOC);
                                         $catRow = mysqli_fetch_array($getCategory, MYSQL_ASSOC);
                                         echo '<tr>
@@ -141,17 +144,34 @@ $mysqli = $db->getConnection();
                                     <img class="" src="uploads/' . $rows["Photo"] . '" alt="" width="80px" height="80px">
                                 </td>
                                 <td class="td-width">
-                                    <h4><a href="details.php?id='.$rows['itemId'].'">' . $rows["Name"] . '</a></h4>
+                                    <h4><a href="details.php?id=' . $rows['itemId'] . '">' . $rows["Name"] . '</a></h4>
                                         <p class="description">' . $rows["Description"] . '</p>
                                     <i class="fa fa-calendar"></i><small class=""> Posted ' . $rows["DatePosted"] . '</small>
                                 </td>
                                 <td>
-                                    <span class="label label-success">'.$catRow['Category'].'</span>&nbsp;
-                                    <span class="label label-success">'.$subcatRow['Subcategory'].'</span>
+                                    <span class="label label-success">' . $catRow['Category'] . '</span>&nbsp;
+                                    <span class="label label-success">' . $subcatRow['Subcategory'] . '</span>
                                 </td>
+                                <td>';
+                                        if ($rows['verified'] == 1) {
+                                            echo 'Verified';
+                                        } else {
+                                            echo 'Not Verified';
+                                        }
+
+
+                                        echo '</td>
+                                <td>';
+                                    if($rows['verified'] == 1){
+                                        echo $rows['verification_code'];
+                                    }else{
+                                        echo 'No code';
+                                    }
+                                echo '</td>
+
                                 <td>
-                                    <a href="edit.php?id='.$rows['itemId'].'" class="btn btn-primary">Edit</a>
-                                    <a href="delete.php?id='.$rows['itemId'].'" class="btn btn-danger">Delete</a>
+                                    <a href="edit.php?id=' . $rows['itemId'] . '" class="btn btn-primary">Edit</a>
+                                    <a href="delete.php?id=' . $rows['itemId'] . '" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>';
                                     }
@@ -175,130 +195,37 @@ $mysqli = $db->getConnection();
 
     <div class="row">
         <div class="container">
-            <div class="col-lg-12 footer">
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>About Us</h3>
 
-                        <div>
-                            <p>
-                                Lost and Found is an online portal for enabling people to locate items they or items
-                                they found.
-                                The main reason as to why this initiative is to create and generate a platform to
-                                simplify the life of an average Ugandan who has lost hope after losing a valuable item.
-                            </p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="row" >
-                        <div class="col-md-12">
-                            <div><h3>Latest News</h3>
-                                <div id="news-feed" class="news-feed">
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial2.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial1.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial2.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial1.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>Contact Us</h3>
-
-                        <div>
-                            <p>
-                            <address class="md-margin-bottom-40">
-                                25, Lorem Lis Street, Orange <br>
-                                California, US <br>
-                                Phone: 800 123 3456 <br>
-                                Fax: 800 123 3456 <br>
-                                Email: <a href="mailto:info@anybiz.com" class="">info@anybiz.com</a>
-                            </address>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>Subscribe</h3>
-
-                        <div>
-                            <form method="post"><p>
-                                    Subscribe to our mailing list to receive an update when new items arrive!</p>
-
-                                <div class="form-group">
-                                    <input class="form-control"
-                                           placeholder="Your email address"
-                                           required="" type="email">
-                                </div>
-
-                                <div class="form-group">
-                                    <input class="btn btn-primary" value="Sign up" type="submit">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-sm-12 footer2">
                 <p>&copy; 2015 <a href="#">iCona Systems</a>, Inc. All rights reserved.</p>
             </div>
         </div>
 
 
+    </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

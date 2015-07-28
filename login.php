@@ -37,14 +37,19 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                 } else{
                     $_SESSION['user_type'] = 'user';
                 }
-                /*if(isset($_GET['return_url']) && isset($_GET['id'])){
-                    $return_url = $_GET['return_url'];
-                    $id = $_GET['id'];
-                    $goto =  $return_url."?id=".$id;
-                    header("Location:".$goto);
+                $location = null;
 
-                }*/
-                header("Location:index.php");
+                if($_POST['location'] != ''){
+                    $location = $_POST['location'];
+                }
+
+                if(isset($location)){
+                    header("Location:".$location);
+                }
+
+
+
+
 
 
 
@@ -100,6 +105,18 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                     <input type="password" placeholder="Password" name="password" required="" class="form-control">
                 </div>
+                <div class="input-group margin-bottom-20">
+                    <input type="hidden" name="location" value="
+                    <?php
+                    if(isset($_GET['return_url']) && isset($_GET['id'])){
+                        $return_url = $_GET['return_url'];
+                        $id = $_GET['id'];
+                        echo  $return_url."?id=".$id;
+                    }else{
+                        echo "index.php";
+                    }
+                    ?>">
+                </div>
 
                 <div class="row">
                     <div class="col-md-6 checkbox">
@@ -113,15 +130,16 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
                 <hr>
                 <p>
                     Don't have and account? <a href="register.php">Register Here</a>
+                    <a href="forgot-password.php">Forgot Password</a>
                 </p>
             </form>
         </div>
     </div>
 
 </div>
-
-</body>
 <script type="text/javascript" src="js/jquery-1.11.2.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
+</body>
+
 
 </html>

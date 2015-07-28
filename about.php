@@ -1,8 +1,6 @@
 <?php
 session_start();
-if ($_SESSION['username'] == '' || $_SESSION['username'] == null) header("Location:login.php");
-?>
-<?php
+
 include_once "utils/db_connect.php";
 
 $db = Database::getInstance();
@@ -97,68 +95,6 @@ $mysqli = $db->getConnection();
 
 <div class="row">
     <div class="container">
-        <div class="col-lg-12 footer">
-            <div class="col-sm-6 col-md-3">
-                <div><h3>About Us</h3>
-
-                    <div>
-                        <p>
-                            Lost and Found is an online portal for enabling people to locate items they or items they
-                            found.
-                            The main reason as to why this initiative is to create and generate a platform to
-                            simplify the life of an average Ugandan who has lost hope after losing a valuable item.
-                        </p>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div><h3>Latest News</h3>
-
-                    <div>
-                        <ul>
-                            <li></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div><h3>Contact Us</h3>
-
-                    <div>
-                        <p>
-                        <address class="md-margin-bottom-40">
-                            25, Lorem Lis Street, Orange <br>
-                            California, US <br>
-                            Phone: 800 123 3456 <br>
-                            Fax: 800 123 3456 <br>
-                            Email: <a href="mailto:info@anybiz.com" class="">info@anybiz.com</a>
-                        </address>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div><h3>Subscribe</h3>
-
-                    <div>
-                        <form method="post"><p>
-                                Subscribe to our mailing list to receive an update when new items arrive!</p>
-
-                            <div class="form-group">
-                                <input class="form-control"
-                                       placeholder="Your email address"
-                                       required="" type="email">
-                            </div>
-
-                            <div class="form-group">
-                                <input class="btn btn-primary" value="Sign up" type="submit">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="col-sm-12 footer2">
             <p>&copy; 2015 <a href="#">iCona Systems</a>, Inc. All rights reserved.</p>
         </div>

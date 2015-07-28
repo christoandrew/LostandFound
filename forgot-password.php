@@ -55,8 +55,8 @@ $mysqli = $db->getConnection();
                                 }
                             }
                             ?>
-                            <li><a href="about.php">About</a></li>
-                            <li class="active"><a href="contact.php">Contact</a></li>
+                            <li class="active"><a href="about.php">About</a></li>
+                            <li ><a href="contact.php">Contact</a></li>
 
                         </ul>
                         <ul class="nav navbar-nav pull-right">
@@ -85,72 +85,56 @@ $mysqli = $db->getConnection();
 </div>
 <div class="row">
 
-    <div class="col-lg-12 banner">
+    <div class="row">
+
+        <div class="col-lg-12 banner">
+            <div class="container">
+                <h1>Reset Password</h1>
+                <p>
+                    In case you forgot your password.
+                </p>
+            </div>
+        </div>
 
     </div>
 
 </div>
 <div class="container">
-    <section id="contact-us">
-        <div class="container">
-            <div class="row">
-                <div id="content" class="site-content col-md-8" role="main">
-                    <header class="entry-header">
-                        <h4 class="entry-title">
-                            Contact Us                        </h4>
-                    </header>
-                    <?php
-                        if(isset($_POST['send'])){
-                            $email = $_POST['email'];
-                            $name = $_POST['name'];
-                            $message = $_POST['message'];
+    <div class="row">
+        <div class="col-md-6">
+            <?php
+                if(isset($_POST['send-email'])){
+                    $email = $_POST['email'];
+                    $reset_token = getToken(32);
 
-                            $info = array(
-                                'name' => $name,
-                                'message' => $message,
-                                'email' => $email
-                            );
+                    $info = array(
+                        'email' => $email,
+                        'key' => $reset_token
+                    );
 
-                            if(send_feedback_email($info)){
-                                echo '<div class="alert alert-success">Your message has been sent.</div>';
-                            }else{
-                                echo '<div class="alert alert-danger">Error occurred try again later</div>';
+                    if(mysqli_num_rows($mysqli->query("SELECT * FROM users WHERE Email = '$email' AND Activation=1")) > 0){
+                        $setResetToken = $mysqli->query("UPDATE users SET ResetToken='$reset_token' WHERE Email='$email'");
+                        if($setResetToken){
+                            if(send_reset_email($info)){
+                                echo '<div class="alert alert-success">Please check your email for more instructions</div>';
                             }
-
-
                         }
-
-                    ?>
-
-                    <form id="contact-form" class="contact-form" name="contact-form" method="post" action="contact.php">
-
-                        <div class="row">
-                            <div class="col-lg-6 form-group">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" name="name" required="required" placeholder="Name">
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control" name="email" required="required" placeholder="Email">
-                                </div>
-                                <button class="btn btn-primary btn-lg" name="send">Send Message</button><br><br>
-
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <textarea rows="10" class="form-control" placeholder="Message" name="message" required="required"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div><!--/#content-->
-                <div class="col-md-4">
-                    <h4>Our Location</h4>
-                    <iframe width="100%" height="400px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com.au/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=&amp;aq=0&amp;ie=UTF8&amp;hq=&amp;hnear=&amp;t=m&amp;output=embed"></iframe>
+                    }else{
+                        echo '<div class="alert alert-danger">No account is associated with that email or email was never activated</div>';
+                    }
+                }
+            ?>
+            <br>Enter the email you used when creating the account.
+            <form action="forgot-password.php" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="email" placeholder="Enter email">
                 </div>
-            </div><!--/.row-->
-        </div><!--/.container-->
-    </section>
+                <div class="form-group">
+                    <input type="submit" value="Send Email" name="send-email" class="btn btn-success">
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -168,11 +152,5 @@ $mysqli = $db->getConnection();
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script src="js/jquery.dataTables.min.js"></script>
 <script src="js/dataTables.bootstrap.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#container').DataTable();
-    });
-</script>
 </body>
 </html>

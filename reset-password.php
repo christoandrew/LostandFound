@@ -2,7 +2,7 @@
 session_start();
 
 include_once "utils/db_connect.php";
-include_once "utils/mail_functions.php";
+include_once "utils/PasswordHash.php";
 
 $db = Database::getInstance();
 $mysqli = $db->getConnection();
@@ -22,14 +22,6 @@ $mysqli = $db->getConnection();
 </head>
 <body>
 <div class="container">
-    <!--<div class="row" id="header">
-        <div class="col-md-4 col-xs-4">
-            Logo Here
-        </div>
-        <div class="col-md-8 col-xs-8">
-            Google
-        </div>
-    </div>-->
     <div class="row">
         <div class="col-md-12">
             <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -55,8 +47,8 @@ $mysqli = $db->getConnection();
                                 }
                             }
                             ?>
-                            <li><a href="about.php">About</a></li>
-                            <li class="active"><a href="contact.php">Contact</a></li>
+                            <li class="active"><a href="about.php">About</a></li>
+                            <li ><a href="contact.php">Contact</a></li>
 
                         </ul>
                         <ul class="nav navbar-nav pull-right">
@@ -85,72 +77,73 @@ $mysqli = $db->getConnection();
 </div>
 <div class="row">
 
-    <div class="col-lg-12 banner">
+    <div class="row">
+
+        <div class="col-lg-12 banner">
+            <div class="container">
+                <h1>Reset Password</h1>
+                <p>
+                    Change your password regularly to increase security.
+                </p>
+            </div>
+        </div>
 
     </div>
 
 </div>
 <div class="container">
-    <section id="contact-us">
-        <div class="container">
-            <div class="row">
-                <div id="content" class="site-content col-md-8" role="main">
-                    <header class="entry-header">
-                        <h4 class="entry-title">
-                            Contact Us                        </h4>
-                    </header>
-                    <?php
-                        if(isset($_POST['send'])){
-                            $email = $_POST['email'];
-                            $name = $_POST['name'];
-                            $message = $_POST['message'];
+    <div class="row">
+        <div class="col-md-6">
+            <?php
+            /*if(isset($_POST['change-pass'])){
+                $resetEmail = $_POST['email'];
+                $resetToken = $_POST['reset-token'];
 
-                            $info = array(
-                                'name' => $name,
-                                'message' => $message,
-                                'email' => $email
-                            );
+                $oldPass = $_POST['new-pass'];
+                $confirmPass = $_POST['new-pass-conf'];
 
-                            if(send_feedback_email($info)){
-                                echo '<div class="alert alert-success">Your message has been sent.</div>';
-                            }else{
-                                echo '<div class="alert alert-danger">Error occurred try again later</div>';
-                            }
+                if($oldPass != $confirmPass){
+                    echo '<div class="alert alert-danger">Passwords dont match please check</div>';
+                }else{
+                    $hash = create_hash($confirmPass);
+                    $updatePassword = $mysqli->query("UPDATE users SET Password='$hash' WHERE Email='$resetEmail'");
+                    if($updatePassword){
+                        echo '<div class="alert alert-success">Password successfully changed <a href="login.php">Login Here</a> </div>';
+                    }else{
+                        echo '<div class="alert alert-danger">Error resetting password try again later</div>';
+                    }
+                }
+            }*/
+            if(!empty($_GET['email']) && !empty($_GET['reset_token'])){
+                $email = $_GET['email'];
+                $reset_token = $_GET['reset_token'];
 
-
-                        }
-
-                    ?>
-
-                    <form id="contact-form" class="contact-form" name="contact-form" method="post" action="contact.php">
-
-                        <div class="row">
-                            <div class="col-lg-6 form-group">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" name="name" required="required" placeholder="Name">
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control" name="email" required="required" placeholder="Email">
-                                </div>
-                                <button class="btn btn-primary btn-lg" name="send">Send Message</button><br><br>
+                echo '<br>
+                        <form action="do-reset.php" method="post">
+                            <div class="form-group">
+                                <label>Enter new password.</label>
+                                <input type="text" class="form-control" required="" name="new-pass" placeholder="New Password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm new password</label>
+                                <input type="text" class="form-control" required="" name="new-pass-conf" placeholder="Confirm New Password">
+                            </div>
+                            <div class="form-group">
+                            <input type="hidden" name="email" value="'.$email.'">
+                            <input type="hidden" name="reset-token" value="'.$reset_token.'">
 
                             </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <textarea rows="10" class="form-control" placeholder="Message" name="message" required="required"></textarea>
-                                </div>
+                            <div class="form-group">
+                                <input type="submit" value="Change" name="change-pass" class="btn btn-success">
                             </div>
-                        </div>
+                        </form>';
+            }else{
+                echo '<div class="alert alert-danger">Please ensure that you are using a valid link.</div>';
+            }
+            ?>
 
-                    </form>
-                </div><!--/#content-->
-                <div class="col-md-4">
-                    <h4>Our Location</h4>
-                    <iframe width="100%" height="400px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com.au/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=&amp;aq=0&amp;ie=UTF8&amp;hq=&amp;hnear=&amp;t=m&amp;output=embed"></iframe>
-                </div>
-            </div><!--/.row-->
-        </div><!--/.container-->
-    </section>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -168,11 +161,5 @@ $mysqli = $db->getConnection();
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script src="js/jquery.dataTables.min.js"></script>
 <script src="js/dataTables.bootstrap.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#container').DataTable();
-    });
-</script>
 </body>
 </html>

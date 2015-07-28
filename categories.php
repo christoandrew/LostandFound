@@ -107,21 +107,21 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Transportation</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 18"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 18 AND verified=0"));?>
                         </div>
 
                     </div>
-
                     <div class="col-md-3 item">
-                        <a href="Category/media.php">
-                            <img src="img/icons/media.png" class="img-responsive img-circle"/>
+                        <a href="Category/clothing.php">
+                            <img src="img/icons/shirt.png" class="img-responsive img-circle"/>
                         </a>
 
                         <div align="center">
-                            <h4>Media</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 11"));?>
+                            <h4>Clothing</h4>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 3 AND verified=0"));?>
                         </div>
                     </div>
+
                     <div class="col-md-3 item">
                         <a href="Category/electronics.php">
                             <img src="img/icons/electronics.png" class="img-responsive img-circle"/>
@@ -129,7 +129,7 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Electronics</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 6"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category=6 AND verified=0"));?>
                         </div>
                     </div>
                     <div class="col-md-3 item">
@@ -139,33 +139,13 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Luggage</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 2"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 2 AND verified=0"));?>
                         </div>
                     </div>
                 </div>
                 <br><br>
 
                 <div class="row">
-                    <div class="col-md-3 item">
-                        <a href="Category/medical.php">
-                            <img src="img/icons/medical.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Medical</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 12"));?>
-                        </div>
-                    </div>
-                    <div class="col-md-3 item">
-                        <a href="Category/mail.php">
-                            <img src="img/icons/mail.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Mail</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 10"));?>
-                        </div>
-                    </div>
                     <div class="col-md-3 item">
                         <a href="Category/animals.php">
                             <img src="img/icons/pet.png" class="img-responsive img-circle"/>
@@ -173,75 +153,7 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Pets And Animals</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 1"));?>
-                        </div>
-                    </div>
-                    <div class="col-md-3 item">
-                        <a href="Category/money.php">
-                            <img src="img/icons/money.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Money</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 5"));?>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-
-                <div class="row">
-                    <div class="col-md-3 item">
-                        <a href="Category/household.php">
-                            <img src="img/icons/tools.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Household And Tools</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 7"));?>
-                        </div>
-                    </div>
-                    <div class="col-md-3 item">
-                        <a href="Category/clothing.php">
-                            <img src="img/icons/shirt.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Clothing</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 3"));?>
-                        </div>
-                    </div>
-                    <div class="col-md-3 item">
-                        <a href="Category/jewellery.php">
-                            <img src="img/icons/jewellery.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Jewellery</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 8"));?>
-                        </div>
-                    </div>
-                    <div class="col-md-3 item">
-                        <a href="Category/collectables.php">
-                            <img src="img/icons/collectables.jpg" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Collectibles</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 4"));?>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-
-                <div class="row">
-                    <div class="col-md-3 item">
-                        <a href="Category/tickets.php">
-                            <img src="img/icons/ticket.png" class="img-responsive img-circle"/>
-                        </a>
-
-                        <div align="center">
-                            <h4>Tickets</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 16"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 1 AND verified=0"));?>
                         </div>
                     </div>
                     <div class="col-md-3 item">
@@ -251,7 +163,7 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Musical Equipment</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 13"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 13 AND verified=0"));?>
                         </div>
                     </div>
                     <div class="col-md-3 item">
@@ -261,19 +173,43 @@ $mysqli = $db->getConnection();
 
                         <div align="center">
                             <h4>Literature</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 9"));?>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 9 AND verified=0"));?>
                         </div>
                     </div>
                     <div class="col-md-3 item">
-                        <a href="Category/visual.php">
-                            <img src="img/icons/art.png" class="img-responsive img-circle"/>
+                        <a href="Category/household.php">
+                            <img src="img/icons/tools.png" class="img-responsive img-circle"/>
                         </a>
 
                         <div align="center">
-                            <h4>Art</h4>
-                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 19"));?>
+                            <h4>Household And Tools</h4>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 7 AND verified=0"));?>
                         </div>
                     </div>
+
+                </div>
+                <br><br>
+
+                <div class="row">
+
+
+                    <div class="col-md-3 item">
+                        <a href="Category/jewellery.php">
+                            <img src="img/icons/jewellery.png" class="img-responsive img-circle"/>
+                        </a>
+
+                        <div align="center">
+                            <h4>Jewellery</h4>
+                            <b>Items: </b><?php echo mysqli_num_rows($mysqli->query("SELECT * FROM items WHERE Category = 8 AND verified=0"));?>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+
+                <div class="row">
+
+
+
 
                 </div>
 

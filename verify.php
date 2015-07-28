@@ -102,9 +102,10 @@ $mysqli = $db->getConnection();
 
     <div class="row">
         <div class="col-md-5 col-md-offset-4" style="">
-            <h3>Please answer the security question</h3>
-            <label>What is the serial number of the property</label>
 
+            <label>What is the serial number of the property?</label>
+            <label>If you don't know or remember the serial number <a href="no-serial.php">click here</a></label>
+            <b>Note :</b><small><i>The serial number can be the IMEI , ISBN or the bar code stamp number on the property.</i></small>
             <form role="form" action="confirm-verification.php" method="post">
                 <div class="form-group">
                     <input type="text" name="serial" class="form-control" placeholder="Serial Number" required>
@@ -120,129 +121,6 @@ $mysqli = $db->getConnection();
 
     <div class="row">
         <div class="container">
-            <div class="col-lg-12 footer">
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>About Us</h3>
-
-                        <div>
-                            <p>
-                                Lost and Found is an online portal for enabling people to locate items they or items
-                                they found.
-                                The main reason as to why this initiative is to create and generate a platform to
-                                simplify the life of an average Ugandan who has lost hope after losing a valuable item.
-                            </p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div><h3>Latest News</h3>
-
-                                <div id="news-feed" class="news-feed">
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial2.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure
-                                                dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial1.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure
-                                                dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial2.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure
-                                                dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-
-                                        </div>
-                                    </div>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object" src="Images/testimonial1.jpg" width="50px"
-                                                 height="50px" alt="...">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading"><b>Lorem ipsum</b></h5>
-                                            <small style="font-size: smaller;">Lorem ipsum consequat. Duis aute irure
-                                                dolor in
-                                                reprehenderit in voluptate velit.
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>Contact Us</h3>
-
-                        <div>
-                            <p>
-                            <address class="md-margin-bottom-40">
-                                25, Lorem Lis Street, Orange <br>
-                                California, US <br>
-                                Phone: 800 123 3456 <br>
-                                Fax: 800 123 3456 <br>
-                                Email: <a href="mailto:info@anybiz.com" class="">info@anybiz.com</a>
-                            </address>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div><h3>Subscribe</h3>
-
-                        <div>
-                            <form method="post"><p>
-                                    Subscribe to our mailing list to receive an update when new items arrive!</p>
-
-                                <div class="form-group">
-                                    <input class="form-control"
-                                           placeholder="Your email address"
-                                           required="" type="email">
-                                </div>
-
-                                <div class="form-group">
-                                    <input class="btn btn-primary" value="Sign up" type="submit">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-sm-12 footer2">
                 <p>&copy; 2015 <a href="#">iCona Systems</a>, Inc. All rights reserved.</p>
             </div>
